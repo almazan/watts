@@ -59,6 +59,7 @@ opts.sgdparams.weightNeg = 1;
 
 % Options embedding
 opts.RemoveStopWords = 0;
+opts.TestFV = 1;
 opts.TestDirect = 1;
 
 opts.TestPlatts = 1;
