@@ -46,7 +46,7 @@ bestReg = opts.Reg.Reg(1);
 
 for reg=opts.Reg.Reg
     K = size(attReprTr,1);
-    Wx = learnReg(attReprTr', phocsTr',reg);
+    Wx = learn_regression(attReprTr', phocsTr',reg);
     
     % Check that there are enough valid projections
     if  ~isreal(Wx(:,1:K))
