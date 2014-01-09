@@ -18,5 +18,8 @@ data = prepare_data_learning(opts,data);
 %% Learn PHOC attributes
 data.att_models = learn_attributes(opts,data);
 
-%% Learn common subspace, project and evaluate
-[embedding,emb_repr] = learn_common_subspace(opts,data);
+%% Learn common subspaces and/or calibrations
+[embedding,mAPsval] = learn_common_subspace(opts,data);
+
+%% Evaluate
+mAPstest = evaluate(opts,data,embedding);

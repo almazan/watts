@@ -2,7 +2,7 @@ function  mAP = evaluateFV(opts,DATA)
 %% Direct FV
 fprintf('\n');
 disp('**************************************');
-disp('*************   FV   *************');
+disp('***************   FV   ***************');
 disp('**************************************');
 
 load(opts.fileFeatures,'features');                       
@@ -14,8 +14,11 @@ feats_te = features(:,DATA.idxTest);
 qbe_map = mean(mAPEucl);
 qbe_p1 = mean(p1);
 
+disp('------------------------------------');
 fprintf('Dimensions: %d\n',size(feats_te,1));
 fprintf('qbe -- test: (map: %.2f. p@1: %.2f)\n',  100*qbe_map, 100*qbe_p1);
+disp('------------------------------------');
 
-mAP = qbe_map;
+mAP.qbe = qbe_map;
+mAP.qbs = [];
 end

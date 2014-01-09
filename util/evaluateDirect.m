@@ -20,12 +20,13 @@ qbe_p1 = mean(p1);
 qbs_map = mean(mAPEucl);
 qbs_p1 = mean(p1);
 
-
+disp('------------------------------------');
 fprintf('Dimensions: %d\n',size(attFeatsTeL2,1));
 fprintf('qbe -- test: (map: %.2f. p@1: %.2f)\n',  100*qbe_map, 100*qbe_p1);
 fprintf('qbs -- test: (map: %.2f. p@1: %.2f)\n',  100*qbs_map, 100*qbs_p1);
+disp('------------------------------------');
 
-
-mAP = (qbe_map+qbs_map)/2;
+mAP.qbe = 100*qbe_map;
+mAP.qbs = 100*qbs_map;
 end
 
