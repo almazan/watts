@@ -59,17 +59,17 @@ opts.sgdparams.weightNeg = 1;
 
 % Options embedding
 opts.RemoveStopWords = 0;
-opts.TestFV = 1;
-opts.TestDirect = 1;
+opts.TestFV = 0;
+opts.TestDirect = 0;
 
-opts.TestPlatts = 1;
+opts.TestPlatts = 0;
 opts.Platts.verbose = 1;
 
-opts.TestRegress = 1;
+opts.TestRegress = 0;
 opts.Reg.Reg = [1e-1,1e-2,1e-3,1e-4];
 opts.Reg.verbose = 1;
 
-opts.TestCCA = 1;
+opts.TestCCA = 0;
 opts.CCA.Dims = [96,128];
 opts.CCA.Reg = [1e-4,1e-5,1e-6];
 opts.CCA.verbose = 1;
@@ -81,25 +81,27 @@ opts.KCCA.Dims = [192,256];
 opts.KCCA.Reg = [1e-5,1e-6];
 opts.KCCA.verbose = 1;
 
-opts.evalLineSpotting = 0;
-opts.evalRecog = 0;
-opts.evalHybrid = 0;
+opts.evalRecog = 1;
 
 % Specific dataaset options
 if strcmp(opts.dataset,'GW')
     opts.fold = 1;
-elseif strcmp(opts.dataset,'ESP')
+    opts.evalRecog = 0;
 elseif strcmp(opts.dataset,'IAM')
     opts.PCADIM = 30;
     opts.RemoveStopWords = 1;
     opts.swFile = 'swIAM.txt';
+    opts.evalRecog = 0;
 elseif strcmp(opts.dataset,'IIIT5K')
     opts.minH = 100;
     opts.doMinibox = 0;
-    opts.lexiconFile = 'lexiconIIIT5K.mat';
 elseif strcmp(opts.dataset,'SVT')
     opts.minH = 100;
     opts.doMinibox = 0;
+end
+
+if opts.evalRecog
+    opts.TestKCCA = 1;
 end
 
 % Tags
@@ -125,7 +127,11 @@ end
 opts.tagPHOC = sprintf('_PHOCs%s%s%s',tagLevels,tagLevelsB,tagNumB);
 opts.tagFeatures = sprintf('_FV%s%s%s',tagPCA,tagGMM,tagFold);
 
-opts.pathData = '~/DataWSAttributes';
+% Paths and files
+opts.pathData = './data/files';
+if ~exist(opts.pathData,'dir')
+    mkdir(opts.pathData);
+end
 opts.dataFolder = sprintf('%s/%s%s%s',opts.pathData,opts.dataset,opts.tagPHOC,opts.tagFeatures);
 if ~exist(opts.dataFolder,'dir')
     mkdir(opts.dataFolder);
@@ -144,4 +150,5 @@ if ~exist(opts.folderModels,'dir')
     mkdir(opts.folderModels);
 end
 opts.fileSets = sprintf('data/%s_words_indexes_sets%s.mat',opts.dataset,tagFold);
+opts.fileLexicon = sprintf('%s/%s_lexicon%s',opts.pathData,opts.dataset,opts.tagPHOC);
 end
