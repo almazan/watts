@@ -40,7 +40,7 @@ $ wget http://cvit.iiit.ac.in/projects/SceneTextUnderstanding/IIIT5K-Word_V3.0.t
 $ tar -xvzf IIIT5K-Word_V3.0.tar.gz
 ```
 
-## In Matlab, run the program with the default parameters
+## Run the program with the default parameters
 
 ``` sh
 >> main
