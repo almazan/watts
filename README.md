@@ -25,7 +25,7 @@ This word spotting library uses some great open-source software:
 
 # MATLAB Quick Start Guide
 
-To get started, you need to install MATLAB and download the code from Github. This code has been tested on Mac and Linux and pre-compiled Mex files are included.
+To get started, you need to install MATLAB and download the code from GitHub. This code has been tested on Mac and Linux and some pre-compiled Mex files are included.
 
 ## Download source code
 ``` sh
@@ -33,17 +33,17 @@ $ cd ~/your_projects/
 $ git clone git://github.com/almazan/words-att.git
 ```
 
-## Download and uncompress the test datasets
+## Download and uncompress the IIIT5K datasets
 ``` sh
 $ cd words-att/datasets
-$ wget http://www.cvc.uab.es/~almazan/data/GW.tar.gz
-$ tar -xzf GW.tar.gz
+$ wget http://cvit.iiit.ac.in/projects/SceneTextUnderstanding/IIIT5K-Word_V3.0.tar.gz
+$ tar -xvzf IIIT5K-Word_V3.0.tar.gz
 ```
 
-## Script for parameters validation
+## In Matlab, run the program with the default parameters
 
 ``` sh
 >> main
 ```
 
-The parameters set by default can be modified in the *prepare_opts.m* script
+Note: The parameters set by default can be modified in the *prepare_opts.m* script

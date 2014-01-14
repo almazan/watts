@@ -10,13 +10,17 @@ if ~exist(opts.fileAttModels,'file')
         else
             % When running the code in a single machine
             load(opts.fileFeatures,'features');
+            % Training and validation sets are concatenated
             data.feats_training = [features(:,data.idxTrain) features(:,data.idxValidation)];
             data.phocs_training = [data.phocsTr data.phocsVa];
             [attModels,attReprTr] = learn_attributes_bagging(opts,data);
         end
     else
         % Regular training (without bagging) should only use the training
-        % set
+        % set. In case that the dataset does not contain a validation set,
+        % it is recommended to randomly split the training set in training
+        % and validation sets. This will avoid overfitting when learning
+        % the common subspace
     end
     
     % FV representations of the images are projected into the attribute

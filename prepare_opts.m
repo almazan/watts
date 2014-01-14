@@ -13,7 +13,8 @@ run('util/vlfeat-0.9.16/toolbox/vl_setup')
 % Set random seed to default
 rng('default');
 
-opts.dataset = 'GW';
+% Select the dataset
+opts.dataset = 'IIIT5K';
 
 opts.path_datasets = 'datasets';
 opts.pathDataset = sprintf('%s/%s/',opts.path_datasets,opts.dataset);
@@ -59,17 +60,17 @@ opts.sgdparams.weightNeg = 1;
 
 % Options embedding
 opts.RemoveStopWords = 0;
-opts.TestFV = 0;
-opts.TestDirect = 0;
+opts.TestFV = 1;
+opts.TestDirect = 1;
 
-opts.TestPlatts = 0;
+opts.TestPlatts = 1;
 opts.Platts.verbose = 1;
 
-opts.TestRegress = 0;
+opts.TestRegress = 1;
 opts.Reg.Reg = [1e-1,1e-2,1e-3,1e-4];
 opts.Reg.verbose = 1;
 
-opts.TestCCA = 0;
+opts.TestCCA = 1;
 opts.CCA.Dims = [96,128];
 opts.CCA.Reg = [1e-4,1e-5,1e-6];
 opts.CCA.verbose = 1;

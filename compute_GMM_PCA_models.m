@@ -1,11 +1,12 @@
 function [GMM,PCA] = compute_GMM_PCA_models(opts,images)
 
-% margin = 16;
 descrs = {};
 for i=1:length(images)
     fprintf('Word %d\n', i);
     im = images{i};
     
+    % Resizes the image to a minimum height without modifying the aspect
+    % ratio
     [height,width] = size(im);
     if height<opts.minH
         ar = height/width;
@@ -16,6 +17,7 @@ for i=1:length(images)
     
     im = im2single(im);
     
+    % Densely extracts SIFTs at different levels
     [f,d] = vl_phow(im, opts.phowOpts{:});
     d = d/255;
     
@@ -37,6 +39,7 @@ for i=1:length(images)
     xy = [fx; fy];
     d = [d; xy];
     
+    % Assings each SIFT to a region of the spatial pyramid
     for s = 1:length(opts.numSpatialX)
         ax = linspace(-0.5,0.5,opts.numSpatialX(s)+1);
         ax(1) = -Inf; ax(end) = Inf;
@@ -55,7 +58,7 @@ for i=1:length(images)
 end
 
 %% Computing global PCA
-% Select a subset of normalized SIFTs
+% Selects a subset of normalized SIFTs
 disp('* Computing PCA model *');
 d = [descrs{:}];
 d = [d{:}];
@@ -68,7 +71,7 @@ PCA.mean = m;
 
 
 %% Computing GMM
-% Computing a GMM for every region of the pyramid and concatenate
+% Computing a GMM for every region of the spatial pyramid and concatenate
 disp('* Computing GMM model *');
 GMM.we =[];
 GMM.mu = [];
