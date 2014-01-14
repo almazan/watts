@@ -1,5 +1,4 @@
 function data = load_dataset(opts)
-
 disp('* Loading dataset *');
 
 if ~exist(opts.fileData, 'file')

@@ -1,10 +1,14 @@
 function data = prepare_data_learning(opts,data)
-load(opts.fileSets);
+% Splits the words in the different subsets (train, validation and test)
 
+% opts.fileSets contains the indexes of the subset that each word belongs
+load(opts.fileSets,'idxTrain','idxValidation','idxTest');
 data.idxTrain = idxTrain;
 data.idxValidation = idxValidation;
 data.idxTest = idxTest;
 
+% Words, labels, PHOCS and classes indexes are splitted in the different
+% subsets according to the indexes
 data.wordsTr = data.words(idxTrain);
 data.numWTr = length(data.wordsTr);
 data.wordsVa = data.words(idxValidation);

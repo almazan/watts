@@ -13,7 +13,7 @@ run('util/vlfeat-0.9.16/toolbox/vl_setup')
 % Set random seed to default
 rng('default');
 
-opts.dataset = 'IIIT5K';
+opts.dataset = 'GW';
 
 opts.path_datasets = 'datasets';
 opts.pathDataset = sprintf('%s/%s/',opts.path_datasets,opts.dataset);

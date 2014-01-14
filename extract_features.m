@@ -1,4 +1,5 @@
 function extract_features(opts)
+% Extracts the FV representation for every image in the dataset
 
 if ~exist(opts.fileFeatures,'file')
     load(opts.fileImages,'images');
@@ -14,7 +15,8 @@ if ~exist(opts.fileFeatures,'file')
         load(opts.filePCA);
     end
     
-    % Extracts FV representation from dataset images
+    % Extracts FV representation from dataset images using the GMM and PCA
+    % models
     features = extract_FV_features(opts,images,GMM,PCA);
     
     save(opts.fileFeatures,'features');
