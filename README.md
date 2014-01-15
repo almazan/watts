@@ -40,6 +40,13 @@ $ wget http://cvit.iiit.ac.in/projects/SceneTextUnderstanding/IIIT5K-Word_V3.0.t
 $ tar -xvzf IIIT5K-Word_V3.0.tar.gz
 ```
 
+## Download precomputed models for IIIT5K (optional)
+``` sh
+$ cd words-att/data
+$ wget http://www.cvc.uab.es/~almazan/data/IIIT5K_models.tar.gz
+$ tar -xvzf IIIT5K_models.tar.gz
+```
+
 ## Run the program with the default parameters
 
 ``` sh
