@@ -33,7 +33,7 @@ $ cd ~/your_projects/
 $ git clone git://github.com/almazan/words-att.git
 ```
 
-## Download and uncompress the IIIT5K datasets
+## Download and uncompress the IIIT5K dataset
 ``` sh
 $ cd words-att/datasets
 $ wget http://cvit.iiit.ac.in/projects/SceneTextUnderstanding/IIIT5K-Word_V3.0.tar.gz
@@ -46,4 +46,14 @@ $ tar -xvzf IIIT5K-Word_V3.0.tar.gz
 >> main
 ```
 
-Note: The parameters set by default can be modified in the *prepare_opts.m* script
+Note: The default parameters as well as the dataset selection can be modified in the *prepare_opts.m* script.
+
+----
+
+# Authors
+
+The code has been developed by @almazan and @agordo.
+
+# License
+
+This code has been released under a GPL license. If you need a version of the code licensed under MIT, please, [contact me](http://www.cvc.uab.es/~almazan).
