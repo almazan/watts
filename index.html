@@ -1,79 +1,103 @@
 <!DOCTYPE html>
 <html>
-
   <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Words-att : " />
-
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
-    <title>Words-att</title>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>Word Representation with Embedded Attributes by almazan</title>
   </head>
 
   <body>
+    <div id="container">
+      <div class="inner">
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/almazan/words-att">View on GitHub</a>
-
-          <h1 id="project_title">Words-att</h1>
-          <h2 id="project_tagline"></h2>
-
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/almazan/words-att/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/almazan/words-att/tarball/master">Download this project as a tar.gz file</a>
-            </section>
+        <header>
+          <h1>Word Representation with Embedded Attributes</h1>
+          <h2></h2>
         </header>
+
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/almazan/words-att/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/almazan/words-att/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/almazan/words-att" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <h1>
+<a name="word-spotting-and-recognition-with-embedded-attributes" class="anchor" href="#word-spotting-and-recognition-with-embedded-attributes"><span class="octicon octicon-link"></span></a>Word Spotting and Recognition with Embedded Attributes</h1>
+
+<p>Welcome to the Word Representation with Attributes library, a software for the retrieval and recognition of word images.</p>
+
+<p>This code is written in Matlab and is the basis of the following project:</p>
+
+<h6>
+<a name="jon-almaz%C3%A1n-albert-gordo-alicia-forn%C3%A9s-ernest-valveny--word-spotting-and-recognition-with-embedded-attributes-project-page" class="anchor" href="#jon-almaz%C3%A1n-albert-gordo-alicia-forn%C3%A9s-ernest-valveny--word-spotting-and-recognition-with-embedded-attributes-project-page"><span class="octicon octicon-link"></span></a><a href="http://www.cvc.uab.es/%7Ealmazan">Jon Almazán</a>, <a href="http://dag.cvc.uab.es/content/albert-gordo">Albert Gordo</a>, <a href="http://dag.cvc.uab.es/content/alicia-forn%C3%A9s">Alicia Fornés</a>, <a href="http://www.cvc.uab.es/personal2.asp?id=73">Ernest Valveny</a>.  <em>Word Spotting and Recognition with Embedded Attributes</em>. <a href="http://www.cvc.uab.es/%7Ealmazan/index.php/projects/words-att/">Project Page</a>
+</h6>
+
+<p><img src="http://www.cvc.uab.es/%7Ealmazan/wp-content/uploads/2014/01/spaces_small.png" alt=""></p>
+
+<h2>
+<a name="abstract" class="anchor" href="#abstract"><span class="octicon octicon-link"></span></a>Abstract</h2>
+
+<p>We deal with the problems of word spotting and word recognition on images. In word spotting, the goal is to find all instances of a query word in a dataset of images. In recognition, the goal is to recognize the content of the word image, usually aided by a dictionary or lexicon. We propose a formulation for word representation and matching based on embedded attributes that jointly addresses these two problems. Contrary to most other existing methods, our representation has a fixed length, is low dimensional, and is very fast to compute and, especially, to compare.</p>
+
+<p>We propose to use character attributes to learn a semantic representation of the word images and then perform a calibration of the scores with CCA that puts images and text strings in a common subspace. After that, spotting and recognition become simple nearest neighbor problems in a very low dimensional space. We test our approach on four public datasets of both document and natural images showing results comparable or better than the state-of-the-art on spotting and recognition tasks.</p>
+
+<p>This word spotting library uses some great open-source software:</p>
+
+<ul>
+<li>
+<a href="https://gforge.inria.fr/projects/yael/">Yael library</a> </li>
+<li><a href="http://www.vlfeat.org">VLFeat</a></li>
+</ul><hr><h1>
+<a name="matlab-quick-start-guide" class="anchor" href="#matlab-quick-start-guide"><span class="octicon octicon-link"></span></a>MATLAB Quick Start Guide</h1>
+
+<p>To get started, you need to install MATLAB and download the code from GitHub. This code has been tested on Mac and Linux and some pre-compiled Mex files are included.</p>
+
+<h2>
+<a name="download-source-code" class="anchor" href="#download-source-code"><span class="octicon octicon-link"></span></a>Download source code</h2>
+
+<div class="highlight highlight-sh"><pre><span class="nv">$ </span><span class="nb">cd</span> ~/your_projects/
+<span class="nv">$ </span>git clone git://github.com/almazan/words-att.git
+</pre></div>
+
+<h2>
+<a name="download-and-uncompress-the-iiit5k-datasets" class="anchor" href="#download-and-uncompress-the-iiit5k-datasets"><span class="octicon octicon-link"></span></a>Download and uncompress the IIIT5K datasets</h2>
+
+<div class="highlight highlight-sh"><pre><span class="nv">$ </span><span class="nb">cd </span>words-att/datasets
+<span class="nv">$ </span>wget http://cvit.iiit.ac.in/projects/SceneTextUnderstanding/IIIT5K-Word_V3.0.tar.gz
+<span class="nv">$ </span>tar -xvzf IIIT5K-Word_V3.0.tar.gz
+</pre></div>
+
+<h2>
+<a name="run-the-program-with-the-default-parameters" class="anchor" href="#run-the-program-with-the-default-parameters"><span class="octicon octicon-link"></span></a>Run the program with the default parameters</h2>
+
+<div class="highlight highlight-sh"><pre>&gt;&gt; main
+</pre></div>
+
+<p>Note: The parameters set by default can be modified in the <em>prepare_opts.m</em> script</p>
+
+<h2>
+<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h2>
+
+<p>This code has been developed by <a href="https://github.com/almazan" class="user-mention">@almazan</a> and <a href="https://github.com/agordo" class="user-mention">@agordo</a>.</p>
+        </section>
+
+        <footer>
+          Word Representation with Embedded Attributes is maintained by <a href="https://github.com/almazan">almazan</a><br>
+          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
+      </div>
     </div>
-
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
-
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
-
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
-
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
-
-<h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
-
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
-
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
-
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
-
-<h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
-
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
-
-<h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
-
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
-      </section>
-    </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Words-att maintained by <a href="https://github.com/almazan">almazan</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
-
-    
-
   </body>
 </html>
