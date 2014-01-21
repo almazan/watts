@@ -5,7 +5,7 @@ Welcome to the Word Representation with Attributes library, a software for the r
 
 This code is written in Matlab and is the basis of the following project:
 
-###### [Jon Almazán](http://www.cvc.uab.es/~almazan), Albert Gordo, Alicia Fornés, Ernest Valveny.  *Word Spotting and Recognition with Embedded Attributes*. [Project Page](http://www.cvc.uab.es/~almazan/index.php/projects/words-att/)
+###### [Jon Almazán](http://www.cvc.uab.es/~almazan), Albert Gordo, Alicia Fornés, Ernest Valveny.  *Word Spotting and Recognition with Embedded Attributes*. ICCV2013. [Project page](http://www.cvc.uab.es/~almazan/index.php/projects/words-att/)
 
 ![](http://www.cvc.uab.es/~almazan/wp-content/uploads/2014/01/spaces_small.png)
 
