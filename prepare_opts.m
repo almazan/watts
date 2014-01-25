@@ -124,9 +124,10 @@ if opts.bagging
 else
     tagBagging = '_noBagging';
 end
+tagFeats = '_FV';
 
 opts.tagPHOC = sprintf('_PHOCs%s%s%s',tagLevels,tagLevelsB,tagNumB);
-opts.tagFeatures = sprintf('_FV%s%s%s',tagPCA,tagGMM,tagFold);
+opts.tagFeatures = sprintf('%s%s%s%s',tagFeats,tagPCA,tagGMM,tagFold);
 
 % Paths and files
 opts.pathData = './data/files';
