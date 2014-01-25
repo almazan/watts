@@ -60,17 +60,17 @@ opts.sgdparams.weightNeg = 1;
 
 % Options embedding
 opts.RemoveStopWords = 0;
-opts.TestFV = 1;
+opts.TestFV = 0;
 opts.TestDirect = 1;
 
-opts.TestPlatts = 1;
+opts.TestPlatts = 0;
 opts.Platts.verbose = 1;
 
-opts.TestRegress = 1;
+opts.TestRegress = 0;
 opts.Reg.Reg = [1e-1,1e-2,1e-3,1e-4];
 opts.Reg.verbose = 1;
 
-opts.TestCCA = 1;
+opts.TestCCA = 0;
 opts.CCA.Dims = [96,128];
 opts.CCA.Reg = [1e-4,1e-5,1e-6];
 opts.CCA.verbose = 1;
@@ -84,7 +84,7 @@ opts.KCCA.verbose = 1;
 
 opts.evalRecog = 1;
 
-% Specific dataaset options
+% Specific dataset options
 if strcmp(opts.dataset,'GW')
     opts.fold = 1;
     opts.evalRecog = 0;
@@ -151,5 +151,5 @@ if ~exist(opts.folderModels,'dir')
     mkdir(opts.folderModels);
 end
 opts.fileSets = sprintf('data/%s_words_indexes_sets%s.mat',opts.dataset,tagFold);
-opts.fileLexicon = sprintf('%s/%s_lexicon%s',opts.pathData,opts.dataset,opts.tagPHOC);
+opts.fileLexicon = sprintf('%s/%s_lexicon%s.mat',opts.pathData,opts.dataset,opts.tagPHOC);
 end

@@ -69,6 +69,7 @@ if opts.evalRecog
     N = size(attReprTe_emb,2);
     p1small = zeros(N,1);
     p1medium = zeros(N,1);
+    p1large = zeros(N,1);
     for i=1:N
         feat = attReprTe_emb(:,i);
         gt = data.wordsTe(i).gttext;
@@ -101,12 +102,26 @@ if opts.evalRecog
                 p1medium(i) = 0;
             end
         end
+        
+        scores = feat'*phocs_cca;
+        randInd = randperm(length(scores));
+        scores = scores(randInd);
+        [scores,I] = sort(scores,'descend');
+        I = randInd(I);
+        
+        if strcmpi(gt,words{I(1)})
+            p1large(i) = 1;
+        else
+            p1large(i) = 0;
+        end
+        
     end
     disp('------------------------------------');
-    fprintf('lexicon small --   map: %.2f\n', 100*mean(p1small));
+    fprintf('lexicon small --   p@1: %.2f\n', 100*mean(p1small));
     if strcmpi(opts.dataset,'IIIT5K')
-        fprintf('lexicon medium --   map: %.2f\n', 100*mean(p1medium));
+        fprintf('lexicon medium --   p@1: %.2f\n', 100*mean(p1medium));
     end
+    fprintf('lexicon large --   p@1: %.2f\n', 100*mean(p1large));
     disp('------------------------------------');
 end
 
