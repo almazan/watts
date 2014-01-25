@@ -3,7 +3,7 @@ words = data.words(data.idxTest);
 
 % Extracts the unique set of words in the lexicon
 if strcmpi(opts.dataset,'IIIT5K')
-    words=[words(:).mLexi];
+    words=[words(:).sLexi words(:).mLexi];
     words = unique(words);
 elseif strcmpi(opts.dataset,'SVT')
     words=[words(:).sLexi];
