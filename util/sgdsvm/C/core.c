@@ -99,7 +99,7 @@ void sgd_train_class_cv(int cls,
 
             }
         }
-
+	free(Wtmp);
     }
     //printf("Finishing class %d with map %.2f and params [%.6f %d %.4f]\n", cls, bestMap, nextlambda[bestComb],nextbeta[bestComb],nextbias[bestComb]);
     float *scoresVal = (float*)malloc(Nval*sizeof(float));
