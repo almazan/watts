@@ -8,7 +8,7 @@ else
     addpath('util/yael_matlab_linux64_v300/');
 end
 addpath('util/sgdsvm/matlab/');
-run('util/vlfeat-0.9.16/toolbox/vl_setup')
+run('util/vlfeat-0.9.18/toolbox/vl_setup')
 
 % Set random seed to default
 rng('default');
