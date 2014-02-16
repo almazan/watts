@@ -86,7 +86,8 @@ for s = 1:length(opts.numSpatialX)
             d=PCA.eigvec'*d;
             
             d = [d; xy];
-            [we, mu, sigma] = yael_gmm (d, opts.G, 'redo', 3, 'seed', 2);
+            [mu,sigma,we] = vl_gmm(d, opts.G, 'MaxNumIterations', 30, 'NumRepetitions', 2); 
+            we = we'; 
             GMM.we = [GMM.we we];
             GMM.mu = [GMM.mu mu];
             GMM.sigma = [GMM.sigma sigma];

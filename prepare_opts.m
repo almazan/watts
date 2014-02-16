@@ -2,12 +2,6 @@ function opts = prepare_opts()
 
 % Adding all the necessary libraries and paths
 addpath('util/');
-if strcmpi(computer,'maci64')
-    addpath('util/yael_matlab_mac64_v300/');
-else
-    addpath('util/yael_matlab_linux64_v300/');
-end
-addpath('util/sgdsvm/matlab/');
 run('util/vlfeat-0.9.18/toolbox/vl_setup')
 
 % Set random seed to default

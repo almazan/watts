@@ -60,8 +60,7 @@ descrs=PCA.eigvec'*descrs;
 descrs = [descrs; xy];
 
 % Extracts FV representation using the GMM
-fv =  yael_fisher(descrs, GMM.we, GMM.mu, GMM.sigma, 'sigma', 'nonorm');
-fv = normFV(fv);
+fv  =  vl_fisher(descrs, GMM.mu, GMM.sigma, GMM.we, 'Improved');
 end
 
 function X = normFV(X)

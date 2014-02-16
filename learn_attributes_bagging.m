@@ -21,61 +21,83 @@ att_models = struct('W',[],'B',[],'numPosSamples',[]);
 
 % For each attribute
 for idxAtt = 1:numAtt
+    [model, encodedTr] = learn_att(idxAtt,feats, phocs,dimFeats, numSamples, opts, params);
+    att_models(idxAtt) = model;
+    attFeatsTr(idxAtt,:) = encodedTr;
+end
+end
+
+
+function [model, attFeatsBag] = learn_att(idxAtt,feats, phocs,dimFeats, numSamples, opts, params)
     fileModel = sprintf('%smodel_%.3d.mat',opts.folderModels,idxAtt);
     if ~exist(fileModel,'file')
+        % Separate positives and negatives
+        idxPos = find(phocs(idxAtt,:)~=0);
+        idxNeg = find(phocs(idxAtt,:)==0);
+        nPos = length(idxPos);
+        nNeg = length(idxNeg);
+        
+        % If too few positives, discard attribute :(
+        if nPos < 2
+            fprintf('Model for attribute %d discarded. Not enough data\n',idxAtt);
+            f=fopen(opts.modelsLog,'a');
+            fprintf(f,'Model for attribute %d discarded. Not enough data\n',idxAtt);
+            fclose(f);
+            model.W = single(zeros(dimFeats,1));
+            model.B = 0;
+            model.numPosSamples = 0;
+            attFeatsBag = single(zeros(1, numSamples));
+            save(fileModel,'model','attFeatsBag');
+            return;
+        end
+        
         % Prepare the output classifier and bias
         W=single(zeros(dimFeats,1));
         B = 0;
+        attFeatsBag = single(zeros(1, numSamples));
         % Keep counts of how many updates, global and per sample
         Np = zeros(numSamples,1);
-        it = 0;
         N = 0;
         numPosSamples = 0;
         
-        idxPos = find(phocs(idxAtt,:)~=0);
-        idxNeg = find(phocs(idxAtt,:)==0);
-        
-        % We want to do at least 10 iterations. However, some iterations do not
-        % do anything, so we aim at 20 iterations.
-        if length(idxPos)>=2
-            while (N<=10 && it<=20)
-                it = it + 1;
-                fprintf('\nStarting with attribute %d iteration %d\n',idxAtt,it);
-                
-                pp = randperm(length(idxPos));
-                pn = randperm(length(idxNeg));
-                idxTrain =[ idxPos(pp(1:floor(length(pp)*0.8)))  idxNeg(pn(1:floor(length(pn)*0.8)))];
-                idxVal = [idxPos(pp(1+floor(length(pp)*0.8):end) )  idxNeg(pn(1+floor(length(pn)*0.8):end))];
-                idxTrain = idxTrain(randperm(length(idxTrain)));
-                
+        % Do two passes through the data so every sample gets scored at least twice
+        numPasses = 2;
+        numIters = 5;
+        for cpass = 1:numPasses
+            % Randomize data
+            idxPos = idxPos(randperm(nPos));
+            idxNeg = idxNeg(randperm(nNeg));
+            % Get number of samples per group. Since we use floor and we
+            % enforce at least two positive samples, there should always be
+            % at least one sample in train and val for the positives. The
+            % negatives should be populated enough.
+            nTrainPos = floor(0.8*nPos);
+            nValPos = nPos - nTrainPos;
+            nTrainNeg = floor(0.8*nNeg);
+            nValNeg = nNeg - nTrainNeg;
+            
+            % for each iteration
+            for it=1:numIters
+                % Get the first nTrain as train and the rest as val                
+                idxTrain = [   idxPos(1:nTrainPos) idxNeg(1:nTrainNeg)];
+                idxVal = [idxPos(nTrainPos+1:end) idxNeg(nTrainNeg+1:end)];
+                % Get actual data
                 featsTrain = feats(:,idxTrain);
                 phocsTrain = phocs(:,idxTrain);
                 featsVal = feats(:,idxVal);
                 phocsVal = phocs(:,idxVal);
-                
                 labelsTrain = int32(phocsTrain(idxAtt,:)~=0);
                 labelsVal = int32(phocsVal(idxAtt,:)~=0);
-                nPosT = sum(labelsTrain);
-                nPosV = sum(labelsVal);
                 
-                numPosSamples = numPosSamples + nPosT;
-                
-                if nPosT==0
-                    fprintf('No positive training samples for att %d it %d. Skipping\n',idxAtt,it);
-                    continue;
-                end
-                if nPosV==0
-                    fprintf('No positive validation samples for att %d it %d. Skipping\n',idxAtt,it);
-                    continue;
-                end
-                
+                numPosSamples = numPosSamples + nTrainPos;
                 % Learn model
                 tic;
-                modelAtt = sgdsvm_train_cv_mex(featsTrain,labelsTrain,featsVal,labelsVal,params);
+                %modelAtt = sgdsvm_train_cv_mex(featsTrain,labelsTrain,featsVal,labelsVal,params);
+                modelAtt = cvSVM(featsTrain,labelsTrain,featsVal,labelsVal,params);
                 t=toc;
-                fprintf('Model for attribute %d it %d (%.2f map) learned in %.0f seconds using %d positive samples\n',idxAtt, it, modelAtt.info.acc, t, nPosT);
-                f=fopen('learning.log','a');
-                fprintf(f,'Model for attribute %d it %d (%.2f map) learned in %.0f seconds using %d positive samples\n',idxAtt,it, modelAtt.info.acc, t, nPosT);
+                fprintf('Model for attribute %d it %d pass %d (%.2f map) learned in %.0f seconds using %d positive samples\n',idxAtt, it,cpass, modelAtt.info.acc, t, nTrainPos);
+                f=fopen(opts.modelsLog,'a');
+                fprintf(f,'Model for attribute %d it %d pass %d (%.2f map) learned in %.0f seconds using %d positive samples\n',idxAtt,it,cpass, modelAtt.info.acc, t, nTrainPos);
                 fclose(f);
                 
                 % Update things. Update the scores of the samples not used for
@@ -83,75 +105,16 @@ for idxAtt = 1:numAtt
                 N = N+1;
                 Np(idxVal) = Np(idxVal)+1;
                 sc = modelAtt.W'*featsVal;
-                attFeatsTr(idxAtt,idxVal) = attFeatsTr(idxAtt,idxVal) + sc;
+                attFeatsBag(idxVal) = attFeatsBag(idxVal) + sc;
                 W = W + modelAtt.W;
                 B = B + modelAtt.B;
                 
-            end
-            
-            
-            % Check that all the samples has been used at least once for validation
-            % If there is some, we will learn a new model using them
-            
-            while ~isempty(find(Np<=1))
-                fprintf('%d samples that only once or less for validation\n',sum(Np<=1));
-                idxVal = find(Np<=1)';
-                % idxVal may not contain any positive. If it does not, add 20%
-                % of positives
-                if isempty(find(phocs(idxAtt,idxVal)~=0))
-                    idxPos = find(phocs(idxAtt,:)~=0);
-                    pp = randperm(length(idxPos));
-                    idxVal = [idxVal idxPos(pp(1+floor(length(pp)*0.8):end) ) ];
-                end
-                % It is not possible that idxVal contains all the positives, since 20 percent are picked at every iteration, so
-                % in 10 iterations there must be at least one positive sample
-                % that has been picked twice (pigeonhole principle!)
+                % shift the idx to get new samples next iter
+                idxPos=circshift(idxPos, [0,nValPos]);
+                idxNeg=circshift(idxNeg, [0,nValNeg]);
                 
-                idxTrain = setdiff(1:numSamples,idxVal);
-                idxTrain = idxTrain(randperm(length(idxTrain)));
-                
-                featsTrain = feats(:,idxTrain);
-                phocsTrain = phocs(:,idxTrain);
-                featsVal = feats(:,idxVal);
-                phocsVal = phocs(:,idxVal);
-                
-                labelsTrain = int32(phocsTrain(idxAtt,:)~=0);
-                labelsVal = int32(phocsVal(idxAtt,:)~=0);
-                nPosT = sum(labelsTrain);
-                nPosV = sum(labelsVal);
-                
-                numPosSamples = numPosSamples + nPosT;
-                
-                if nPosT==0
-                    fprintf('No positive training samples for att %d it %d. Skipping\n',idxAtt,it);
-                    continue;
-                end
-                if nPosV==0
-                    fprintf('No positive validation samples for att %d it %d. Skipping\n',idxAtt,it);
-                    continue;
-                end
-                N = N + 1;
-                
-                
-                % Learn model
-                tic;
-                modelAtt = sgdsvm_train_cv_mex(featsTrain,labelsTrain,featsVal,labelsVal,params);
-                t=toc;
-                fprintf('Model for attribute %d it %d (%.2f map) learned in %.0f seconds using %d positive samples\n',idxAtt, it, modelAtt.info.acc, t, nPosT);
-                f=fopen('learning.log','a');
-                fprintf(f,'Model for attribute %d it %d (%.2f map) learned in %.0f seconds using %d positive samples\n',idxAtt,it, modelAtt.info.acc, t, nPosT);
-                fclose(f);
-                
-                % Update things. Update the scores of the samples not used for
-                % training, as well as the global model.
-                Np(idxVal) = Np(idxVal)+1;
-                sc = modelAtt.W'*featsVal;
-                attFeatsTr(idxAtt,idxVal) = attFeatsTr(idxAtt,idxVal) + sc;
-                W = W + modelAtt.W;
-                B = B + modelAtt.B;
-                
-            end
-        end
+            end            
+        end                        
         
         % Average and save
         model.W = W;
@@ -160,20 +123,43 @@ for idxAtt = 1:numAtt
         if N~=0
             model.W = model.W/N;
             model.B = model.B/N;
-            attFeatsTr(idxAtt,:) = attFeatsTr(idxAtt,:) ./ Np';
+            attFeatsBag = attFeatsBag ./ Np';
             model.numPosSamples = ceil(numPosSamples / N);
         end
         
-        attFeatsBag = attFeatsTr(idxAtt,:);
         save(fileModel,'model','attFeatsBag');
         
-        att_models(idxAtt) = model;
     else
         fprintf('\nAttribute %d already computed. Loaded.\n',idxAtt);
-        load(fileModel);
-        att_models(idxAtt) = model;
-        attFeatsTr(idxAtt,:) = attFeatsBag;
+        load(fileModel); % Contains the variables to return.
     end
 end
 
+
+function map = modelMap(scores, labels)
+[s,idx] = sort(scores, 'descend');
+labelsSort = single(labels(idx));
+acc = cumsum(labelsSort).*labelsSort;
+N = sum(labelsSort);
+map = sum(single(acc)./(1:length(labels)))/N;
+end
+
+function model = cvSVM(featsTrain, labelsTrain, featsVal, labelsVal, params) 
+        bestmap = 0;
+        bestlbd = 0;
+        W = [];
+        B = [];
+        for lbd=params.lbds
+            [Wv,Bv,info, scores] = vl_svmtrain(featsTrain, double(2*labelsTrain-1), double(lbd),'BiasMultiplier', 0.1);
+            cmap = modelMap(Wv'*featsVal, labelsVal);
+            if cmap > bestmap
+                bestmap = cmap;
+                bestlbd = double(lbd);
+                W = Wv;
+                B = Bv;
+            end
+        end
+        model.W = W;
+        model.B = B;
+        model.info.acc = 100*bestmap;
 end
