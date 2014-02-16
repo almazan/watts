@@ -18,7 +18,6 @@ We propose to use character attributes to learn a semantic representation of the
 
 This word spotting library uses some great open-source software:
 
-* [Yael library](https://gforge.inria.fr/projects/yael/) 
 * [VLFeat](http://www.vlfeat.org)
 
 ----
