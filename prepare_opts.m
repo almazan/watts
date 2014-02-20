@@ -23,7 +23,7 @@ opts.PCADIM = 62;
 opts.numSpatialX = 6;
 opts.numSpatialY = 2;
 opts.G = 16;
-opts.phowOpts = {'Verbose', false, 'Step', 3, 'FloatDescriptors', true} ;
+opts.phowOpts = {'Verbose', false, 'Step', 3, 'FloatDescriptors', true, 'sizes',[2,4,6,8,10,12]} ;
 opts.doMinibox = 1;
 opts.minH = -1;
 opts.fold = -1;
@@ -51,6 +51,7 @@ opts.sgdparams.eval_freq = 2;
 opts.sgdparams.t = 0;
 opts.sgdparams.weightPos = 1;
 opts.sgdparams.weightNeg = 1;
+opts.modelsLog = sprintf('%s/learning.log',opts.folderModels);
 
 % Options embedding
 opts.RemoveStopWords = 0;

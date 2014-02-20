@@ -1,6 +1,7 @@
 function [mAP, rec] = compute_mAP(resultLabels, numRelevant)
 
 resultLabels = single(resultLabels);
+resultLabels(resultLabels<0) = 0;
 [r,c] = size(resultLabels);
 
 
