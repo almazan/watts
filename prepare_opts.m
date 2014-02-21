@@ -51,7 +51,6 @@ opts.sgdparams.eval_freq = 2;
 opts.sgdparams.t = 0;
 opts.sgdparams.weightPos = 1;
 opts.sgdparams.weightNeg = 1;
-opts.modelsLog = sprintf('%s/learning.log',opts.folderModels);
 
 % Options embedding
 opts.RemoveStopWords = 0;
@@ -143,6 +142,7 @@ opts.fileFeatures = sprintf('%s/%s%s.mat',opts.dataFolder,opts.dataset,opts.tagF
 opts.fileAttModels = sprintf('%s/%s_attModels%s%s%s.mat',opts.dataFolder,opts.dataset,opts.tagPHOC,opts.tagFeatures,tagBagging);
 opts.fileAttRepres = sprintf('%s/%s_attRepres%s%s%s.mat',opts.dataFolder,opts.dataset,opts.tagPHOC,opts.tagFeatures,tagBagging);
 opts.folderModels = sprintf('%s/models%s/',opts.dataFolder,tagBagging);
+opts.modelsLog = sprintf('%s/learning.log',opts.folderModels);
 if ~exist(opts.folderModels,'dir')
     mkdir(opts.folderModels);
 end
