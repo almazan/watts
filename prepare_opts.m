@@ -27,7 +27,6 @@ opts.phowOpts = {'Verbose', false, 'Step', 3, 'FloatDescriptors', true, 'sizes',
 opts.doMinibox = 1;
 opts.minH = -1;
 opts.fold = -1;
-opts.FVdim = (opts.PCADIM+2)*opts.numSpatialX*opts.numSpatialY*opts.G*2;
 
 % Options PHOC attributes
 opts.levels = [2 3 4 5];
@@ -94,6 +93,8 @@ elseif strcmp(opts.dataset,'SVT')
     opts.minH = 100;
     opts.doMinibox = 0;
 end
+
+opts.FVdim = (opts.PCADIM+2)*opts.numSpatialX*opts.numSpatialY*opts.G*2;
 
 if opts.evalRecog
     opts.TestKCCA = 1;

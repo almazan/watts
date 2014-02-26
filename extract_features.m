@@ -19,7 +19,7 @@ if ~exist(opts.fileFeatures,'file')
     % models
     features = extract_FV_features(opts,images,GMM,PCA);
     
-    save(opts.fileFeatures,'features');
+    save(opts.fileFeatures,'features','-v7.3');
 end
 
 end
