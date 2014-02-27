@@ -84,7 +84,7 @@ if strcmp(opts.dataset,'GW')
 elseif strcmp(opts.dataset,'IAM')
     opts.PCADIM = 30;
     opts.RemoveStopWords = 1;
-    opts.swFile = 'swIAM.txt';
+    opts.swFile = 'data/swIAM.txt';
     opts.evalRecog = 0;
 elseif strcmp(opts.dataset,'IIIT5K')
     opts.minH = 100;
