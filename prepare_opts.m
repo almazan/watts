@@ -23,11 +23,10 @@ opts.PCADIM = 62;
 opts.numSpatialX = 6;
 opts.numSpatialY = 2;
 opts.G = 16;
-opts.phowOpts = {'Verbose', false, 'Step', 3, 'FloatDescriptors', true} ;
+opts.phowOpts = {'Verbose', false, 'Step', 3, 'FloatDescriptors', true, 'sizes',[2,4,6,8,10,12]} ;
 opts.doMinibox = 1;
 opts.minH = -1;
 opts.fold = -1;
-opts.FVdim = (opts.PCADIM+2)*opts.numSpatialX*opts.numSpatialY*opts.G*2;
 
 % Options PHOC attributes
 opts.levels = [2 3 4 5];
@@ -85,7 +84,7 @@ if strcmp(opts.dataset,'GW')
 elseif strcmp(opts.dataset,'IAM')
     opts.PCADIM = 30;
     opts.RemoveStopWords = 1;
-    opts.swFile = 'swIAM.txt';
+    opts.swFile = 'data/swIAM.txt';
     opts.evalRecog = 0;
 elseif strcmp(opts.dataset,'IIIT5K')
     opts.minH = 100;
@@ -94,6 +93,8 @@ elseif strcmp(opts.dataset,'SVT')
     opts.minH = 100;
     opts.doMinibox = 0;
 end
+
+opts.FVdim = (opts.PCADIM+2)*opts.numSpatialX*opts.numSpatialY*opts.G*2;
 
 if opts.evalRecog
     opts.TestKCCA = 1;
@@ -142,6 +143,7 @@ opts.fileFeatures = sprintf('%s/%s%s.mat',opts.dataFolder,opts.dataset,opts.tagF
 opts.fileAttModels = sprintf('%s/%s_attModels%s%s%s.mat',opts.dataFolder,opts.dataset,opts.tagPHOC,opts.tagFeatures,tagBagging);
 opts.fileAttRepres = sprintf('%s/%s_attRepres%s%s%s.mat',opts.dataFolder,opts.dataset,opts.tagPHOC,opts.tagFeatures,tagBagging);
 opts.folderModels = sprintf('%s/models%s/',opts.dataFolder,tagBagging);
+opts.modelsLog = sprintf('%s/learning.log',opts.folderModels);
 if ~exist(opts.folderModels,'dir')
     mkdir(opts.folderModels);
 end

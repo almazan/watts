@@ -1,5 +1,12 @@
 function mAP = evaluate(opts,data,embedding)
 
+%% Small fix for versions of matlab older than 2012b ('8') that do not support stable intersection
+if verLessThan('matlab', '8')
+    inters=@stableintersection;
+else
+    inters=@intersection;
+end
+
 %% Load attribute representations
 load(opts.fileAttRepres,'attReprTe');
 
@@ -75,7 +82,7 @@ if opts.evalRecog
         gt = data.wordsTe(i).gttext;
         
         smallLexicon = data.wordsTe(i).sLexi;
-        [~,~,ind] = intersect(smallLexicon,words,'stable');
+        [~,~,ind] = inters(smallLexicon,words,'stable');
         scores = feat'*phocs_cca(:,ind);
         randInd = randperm(length(scores));
         scores = scores(randInd);
@@ -90,7 +97,7 @@ if opts.evalRecog
         
         if strcmpi(opts.dataset,'IIIT5K')
             mediumLexicon = data.wordsTe(i).mLexi;
-            [~,~,ind] = intersect(mediumLexicon,words,'stable');
+            [~,~,ind] = inters(mediumLexicon,words,'stable');
             scores = feat'*phocs_cca(:,ind);
             randInd = randperm(length(scores));
             scores = scores(randInd);
@@ -125,8 +132,7 @@ if opts.evalRecog
     disp('------------------------------------');
 end
 
-%
-% % Hybrid (qbe style)
+% % Hybrid spotting not implemented yet
 % if opts.evalHybrid
 %     alpha = 0:0.1:1;
 %     hybrid_test_map = zeros(length(alpha),1);
@@ -137,4 +143,14 @@ end
 %     end
 % end
 
+end
+
+% Ugly hack to deal with the lack of stable intersection in old versions of
+% matlab
+function [empty1, empty2, ind] = stableintersection(a, b, varargin)
+    empty1=0;
+    empty2=0;
+    [~,ia,ib] = intersect(a,b); 
+    [~, tmp2] = sort(ia);
+    ind = ib(tmp2);
 end

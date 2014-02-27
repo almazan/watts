@@ -18,7 +18,6 @@ We propose to use character attributes to learn a semantic representation of the
 
 This word spotting library uses some great open-source software:
 
-* [Yael library](https://gforge.inria.fr/projects/yael/) 
 * [VLFeat](http://www.vlfeat.org)
 
 ----
@@ -63,4 +62,4 @@ The code has been developed by @almazan and @agordo.
 
 # License
 
-This code has been released under a GPL license. If you need a version of the code licensed under MIT, please, [contact me](http://www.cvc.uab.es/~almazan).
+This code has been released under the MIT license.
