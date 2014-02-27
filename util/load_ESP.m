@@ -11,7 +11,7 @@ nWords = length(input{1});
 
 margin=16;
 pathIm = '';
-images = cell(nWords);
+images = cell(nWords,1);
 for j=1:nWords
     words(j).pathIm = [opts.pathImages input{1}{j}];
     words(j).pathIm = [words(j).pathIm '.png'];
@@ -64,6 +64,6 @@ end
 data.words = words;
 data.classes = classes;
 data.idxClasses = idxClasses;
-data.names = data.names;
+data.names = names;
 
 end
