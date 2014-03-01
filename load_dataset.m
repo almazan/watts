@@ -9,6 +9,8 @@ if ~exist(opts.fileData, 'file')
         [data,images] = load_IIIT5K(opts);
     elseif strcmpi(opts.dataset,'SVT')
         [data,images] = load_SVT(opts);
+    elseif strcmpi(opts.dataset,'ICDAR11')
+        [data,images] = load_ICDAR11(opts);
     elseif strcmpi(opts.dataset,'GW')
         [data,images] = load_GW(opts);
     elseif strcmpi(opts.dataset,'ESP')

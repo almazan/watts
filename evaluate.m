@@ -4,7 +4,7 @@ function mAP = evaluate(opts,data,embedding)
 if verLessThan('matlab', '8')
     inters=@stableintersection;
 else
-    inters=@intersection;
+    inters=@intersect;
 end
 
 %% Load attribute representations

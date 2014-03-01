@@ -46,6 +46,7 @@ for i=1:length(images)
     feats(:,i) = single(getImageDescriptorFV(opts, GMM, PCA, descrs));
     
 end
+feats(isnan(feats)) = 0;
 end
 
 % -------------------------------------------------------------------------

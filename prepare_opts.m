@@ -8,7 +8,7 @@ run('util/vlfeat-0.9.18/toolbox/vl_setup')
 rng('default');
 
 % Select the dataset
-opts.dataset = 'SVT';
+opts.dataset = 'ICDAR11';
 
 opts.path_datasets = 'datasets';
 opts.pathDataset = sprintf('%s/%s/',opts.path_datasets,opts.dataset);
@@ -90,6 +90,9 @@ elseif strcmp(opts.dataset,'IIIT5K')
     opts.minH = 100;
     opts.doMinibox = 0;
 elseif strcmp(opts.dataset,'SVT')
+    opts.minH = 100;
+    opts.doMinibox = 0;
+elseif strcmp(opts.dataset,'ICDAR11')
     opts.minH = 100;
     opts.doMinibox = 0;
 end

@@ -2,7 +2,7 @@ function lexicon = extract_lexicon(opts,data)
 words = data.words(data.idxTest);
 
 % Extracts the unique set of words in the lexicon
-if strcmpi(opts.dataset,'IIIT5K')
+if ismember(opts.dataset,{'IIIT5K','ICDAR11'})
     words=[words(:).sLexi words(:).mLexi];
     words = unique(words);
 elseif strcmpi(opts.dataset,'SVT')
