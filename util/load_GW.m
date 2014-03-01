@@ -10,7 +10,7 @@ nWords = length(input{1});
 
 margin=16;
 pathIm = '';
-images = cell(nWords);
+images = cell(nWords,1);
 for j=1:nWords
     words(j).pathIm = [opts.pathImages input{1}{j}];
     loc = [input{2}(j) input{4}(j) input{3}(j) input{5}(j)];
@@ -62,6 +62,6 @@ end
 data.words = words;
 data.classes = classes;
 data.idxClasses = idxClasses;
-data.names = data.names;
+data.names = names;
 
 end
