@@ -6,11 +6,12 @@ disp('**************************************');
 disp('***************  KCSR   **************');
 disp('**************************************');
 
-mat = embedding.rndmat(1:embedding.M,:);
+matx = embedding.rndmatx(1:embedding.M,:);
+maty = embedding.rndmaty(1:embedding.M,:);
 
-tmp = mat*DATA.attReprTe;
+tmp = matx*DATA.attReprTe;
 attReprTe_emb = 1/sqrt(embedding.M) * [ cos(tmp); sin(tmp)];
-tmp = mat*DATA.phocsTe;
+tmp = maty*DATA.phocsTe;
 phocsTe_emb = 1/sqrt(embedding.M) * [ cos(tmp); sin(tmp)];
 
 % Mean center
