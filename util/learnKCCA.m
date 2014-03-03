@@ -18,26 +18,30 @@ bestK = opts.KCCA.Dims(end);
 bestG = opts.KCCA.G(end);
 bestM = opts.KCCA.M(end);
 
-D = size(DATA.attReprTr,1);
+Dx = size(DATA.attReprTr,1);
+Dy = size(DATA.phocsTr,1);
 for G=opts.KCCA.G
     % Create random projections matrix
     RandStream.setGlobalStream(RandStream('mt19937ar','seed',0));
-    rndmat = normrnd(0,1/G, 2500,D);
+    rndmatx = normrnd(0,1/G, 2500,Dx);
+    rndmaty = normrnd(0,1/G, 2500,Dy);
+
     for M=opts.KCCA.M
         % Cut slice
-        mat = rndmat(1:M,:);
+        matx = rndmatx(1:M,:);
+        maty = rndmaty(1:M,:);
         
         % Project attributes and phocs using the explicit exponential
         % embedding. Project train, val, and test.
         % train
-        tmp = mat*DATA.attReprTr;
+        tmp = matx*DATA.attReprTr;
         attReprTr_emb = 1/sqrt(M) * [ cos(tmp); sin(tmp)];
-        tmp = mat*DATA.phocsTr;
+        tmp = maty*DATA.phocsTr;
         phocsTr_emb = 1/sqrt(M) * [ cos(tmp); sin(tmp)];
         % val
-        tmp = mat*DATA.attReprVa;
+        tmp = matx*DATA.attReprVa;
         attReprVal_emb = 1/sqrt(M) * [ cos(tmp); sin(tmp)];
-        tmp = mat*DATA.phocsVa;
+        tmp = maty*DATA.phocsVa;
         phocsVal_emb = 1/sqrt(M) * [ cos(tmp); sin(tmp)];
         
         % Mean center
@@ -106,15 +110,17 @@ disp('------------------------------------');
 
 % Get random matrix
 RandStream.setGlobalStream(RandStream('mt19937ar','seed',0));
-rndmat = normrnd(0,1/bestG, 2500,D);
-mat = rndmat(1:bestM,:);
+rndmatx = normrnd(0,1/bestG, 2500,Dx);
+matx = rndmatx(1:bestM,:);
+rndmaty = normrnd(0,1/bestG, 2500,Dy);
+maty = rndmaty(1:bestM,:);
 % Embed train (full) and test
 % Project attributes and phocs using the explicit exponential
 % embedding. Project train, val, and test.
 % train
-tmp = mat*DATA.attReprTrFull;
+tmp = matx*DATA.attReprTrFull;
 attReprTrFull_emb = 1/sqrt(bestM) * [ cos(tmp); sin(tmp)];
-tmp = mat*DATA.phocsTrFull;
+tmp = maty*DATA.phocsTrFull;
 phocsTrFull_emb = 1/sqrt(bestM) * [ cos(tmp); sin(tmp)];
 
 % Mean center
@@ -133,7 +139,8 @@ embedding.Wy = Wy;
 embedding.K = bestK;
 embedding.M = bestM;
 embedding.reg = bestReg;
-embedding.rndmat = rndmat;
+embedding.rndmatx = rndmatx;
+embedding.rndmaty = rndmaty;
 embedding.matts = ma;
 embedding.mphocs = mh;
 

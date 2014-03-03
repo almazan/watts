@@ -56,8 +56,8 @@ if opts.evalRecog
     end
     
     % Embed the test attributes representation (attRepreTe_emb)
-    mat = emb.rndmat(1:emb.M,:);
-    tmp = mat*data.attReprTe;
+    matx = emb.rndmatx(1:emb.M,:);
+    tmp = matx*data.attReprTe;
     attReprTe_emb = 1/sqrt(emb.M) * [ cos(tmp); sin(tmp)];
     attReprTe_emb = bsxfun(@minus, attReprTe_emb, emb.matts);
     attReprTe_emb = emb.Wx(:,1:emb.K)' * attReprTe_emb;
@@ -65,7 +65,8 @@ if opts.evalRecog
     
     % Embed the dictionary
     phocs = single(lexicon.phocs);
-    tmp = mat*phocs;
+    maty = emb.rndmaty(1:emb.M,:);
+    tmp = maty*phocs;
     phocs_cca = 1/sqrt(emb.M) * [ cos(tmp); sin(tmp)];
     phocs_cca=bsxfun(@minus, phocs_cca, emb.mphocs);
     phocs_cca = emb.Wy(:,1:emb.K)' * phocs_cca;
