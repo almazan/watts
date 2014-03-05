@@ -36,6 +36,8 @@ fid = fopen('data/bigrams.txt','r');
 bgrams = textscan(fid,'%s');
 fclose(fid);
 opts.bgrams = bgrams{1}(1:opts.numBigrams);
+opts.unigrams = 'abcdefghijklmnopqrstuvwxyz';
+opts.digits='0123456789';
 opts.considerDigits = 1;
 
 % Options learning models
@@ -54,7 +56,7 @@ opts.sgdparams.weightNeg = 1;
 % Options embedding
 opts.RemoveStopWords = 0;
 opts.TestFV = 0;
-opts.TestDirect = 0;
+opts.TestDirect = 1;
 
 opts.TestPlatts = 0;
 opts.Platts.verbose = 1;
