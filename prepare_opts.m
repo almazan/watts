@@ -2,6 +2,36 @@ function opts = prepare_opts()
 
 % Adding all the necessary libraries and paths
 addpath('util/');
+if ~exist('util/bin','dir')
+    mkdir('util/bin');
+end
+addpath('util/bin');
+if ~exist('calib_c')
+    mex -o util/bin/calib_c -O -largeArrayDims util/calib_c.c
+end
+if ~exist('computeStats_c')
+    mex -o util/bin/computeStats_c -O -largeArrayDims util/computeStats_c.c
+end
+if ~exist('phoc_mex')
+    mex -o util/bin/phoc_mex -O -largeArrayDims util/phoc_mex.cpp
+end
+if ~exist('util/vlfeat-0.9.18/toolbox/mex','dir')
+    if isunix
+        cd 'util/vlfeat-0.9.18/';
+        mexloc = fullfile(matlabroot,'bin/mex');
+        % This is necessary to include support to OpenMP in Mavericks+XCode5
+        % gcc4.2 can be installed from MacPorts
+        %if strcmpi(computer,'MACI64')
+        %   system(sprintf('make MEX=%s CC=/opt/local/bin/gcc-apple-4.2',mexloc));
+        %else
+        system(sprintf('make MEX=%s',mexloc));
+        %end
+        cd ../..;
+    else
+        run('util/vlfeat-0.9.18/toolbox/vl_compile');
+    end
+end
+
 run('util/vlfeat-0.9.18/toolbox/vl_setup')
 
 % Set random seed to default
