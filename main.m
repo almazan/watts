@@ -23,3 +23,6 @@ data.att_models = learn_attributes(opts,data);
 
 %% Evaluate
 mAPstest = evaluate(opts,data,embedding);
+
+%% Save model
+% save_model(opts,data,embedding);
