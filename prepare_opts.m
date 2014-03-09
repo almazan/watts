@@ -160,17 +160,18 @@ opts.tagPHOC = sprintf('_PHOCs%s%s%s',tagLevels,tagLevelsB,tagNumB);
 opts.tagFeatures = sprintf('%s%s%s%s',tagFeats,tagPCA,tagGMM,tagFold);
 
 % Paths and files
-opts.pathData = './data/files';
+opts.pathData = './data';
+opts.pathFiles = sprintf('%s/files',opts.pathData);
 if ~exist(opts.pathData,'dir')
     mkdir(opts.pathData);
 end
-opts.dataFolder = sprintf('%s/%s%s%s',opts.pathData,opts.dataset,opts.tagPHOC,opts.tagFeatures);
+opts.dataFolder = sprintf('%s/%s%s%s',opts.pathFiles,opts.dataset,opts.tagPHOC,opts.tagFeatures);
 if ~exist(opts.dataFolder,'dir')
     mkdir(opts.dataFolder);
 end
-opts.fileData = sprintf('%s/%s_data.mat',opts.pathData,opts.dataset);
-opts.fileImages = sprintf('%s/%s_images.mat',opts.pathData,opts.dataset);
-opts.fileWriters = sprintf('%s/%s_writers.mat',opts.pathData,opts.dataset);
+opts.fileData = sprintf('%s/%s_data.mat',opts.pathFiles,opts.dataset);
+opts.fileImages = sprintf('%s/%s_images.mat',opts.pathFiles,opts.dataset);
+opts.fileWriters = sprintf('%s/%s_writers.mat',opts.pathFiles,opts.dataset);
 opts.fileGMM = sprintf('%s/%s%s.mat',opts.dataFolder,opts.dataset,tagGMM);
 opts.filePCA = sprintf('%s/%s%s.mat',opts.dataFolder,opts.dataset,tagPCA);
 opts.filePHOCs = sprintf('%s/%s%s.mat',opts.dataFolder,opts.dataset,opts.tagPHOC);
@@ -183,5 +184,5 @@ if ~exist(opts.folderModels,'dir')
     mkdir(opts.folderModels);
 end
 opts.fileSets = sprintf('data/%s_words_indexes_sets%s.mat',opts.dataset,tagFold);
-opts.fileLexicon = sprintf('%s/%s_lexicon%s.mat',opts.pathData,opts.dataset,opts.tagPHOC);
+opts.fileLexicon = sprintf('%s/%s_lexicon%s.mat',opts.pathFiles,opts.dataset,opts.tagPHOC);
 end
