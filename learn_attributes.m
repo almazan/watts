@@ -11,7 +11,7 @@ if ~exist(opts.fileAttModels,'file')
             % When running the code in a single machine
             load(opts.fileFeatures,'features');
             % Training and validation sets are concatenated
-            data.feats_training = features(:,data.idxTrain | data.idxValidation );
+            data.feats_training = features(:, [find(data.idxTrain), find(data.idxValidation)]);
             data.phocs_training = [data.phocsTr data.phocsVa];
             [attModels,attReprTr] = learn_attributes_bagging(opts,data);
         end

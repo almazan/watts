@@ -36,6 +36,14 @@ if ~exist('util/vlfeat-0.9.18/toolbox/mex','dir')
     end
 end
 
+if ~exist('computeFV_mex')
+    if strcmp(computer,'MACI64')
+        system('ln -s ../vlfeat-0.9.18/bin/maci64/libvl.dylib util/bin/libvl.dylib');
+    end
+    % Link the vlfeat binary and compile
+    mex -o util/bin/computeFV_mex -O -largeArrayDims -I./util/vlfeat-0.9.18/ -L./util/vlfeat-0.9.18/bin/maci64 -lvl util/computeFV_mex.cpp
+end
+
 run('util/vlfeat-0.9.18/toolbox/vl_setup')
 
 % Set random seed to default
