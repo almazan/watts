@@ -6,6 +6,10 @@ if ~exist('util/bin','dir')
     mkdir('util/bin');
 end
 addpath('util/bin');
+if ~exist('util/io','dir')
+    mkdir('util/io');
+end
+addpath('util/io');
 if ~exist('calib_c')
     mex -o util/bin/calib_c -O -largeArrayDims util/calib_c.c
 end
@@ -38,7 +42,7 @@ run('util/vlfeat-0.9.18/toolbox/vl_setup')
 rng('default');
 
 % Select the dataset
-opts.dataset = 'SVT';
+opts.dataset = 'IIIT5K';
 
 opts.path_datasets = 'datasets';
 opts.pathDataset = sprintf('%s/%s/',opts.path_datasets,opts.dataset);
@@ -56,6 +60,7 @@ opts.G = 16;
 opts.phowOpts = {'Verbose', false, 'Step', 3, 'FloatDescriptors', true, 'sizes',[2,4,6,8,10,12]} ;
 opts.doMinibox = 1;
 opts.minH = -1;
+opts.maxH = 99999;
 opts.fold = -1;
 
 % Options PHOC attributes
@@ -120,12 +125,15 @@ elseif strcmp(opts.dataset,'IAM')
     opts.evalRecog = 0;
 elseif strcmp(opts.dataset,'IIIT5K')
     opts.minH = 100;
+    opts.maxH = 250;
     opts.doMinibox = 0;
 elseif strcmp(opts.dataset,'SVT')
     opts.minH = 100;
+    opts.maxH = 250;
     opts.doMinibox = 0;
 elseif strcmp(opts.dataset,'ICDAR11')
     opts.minH = 100;
+    opts.maxH = 250;
     opts.doMinibox = 0;
 end
 
@@ -137,8 +145,8 @@ end
 
 % Tags
 tagminH = '';
-if opts.minH > -1
-    tagminH = sprintf('_minH%d',opts.minH);
+if opts.minH > -1 || opts.maxH < 99999
+    tagminH = sprintf('_minH%d_maxH%d',opts.minH, opts.maxH);
 end
 tagFold = '';
 if opts.fold > -1
@@ -170,12 +178,12 @@ if ~exist(opts.dataFolder,'dir')
     mkdir(opts.dataFolder);
 end
 opts.fileData = sprintf('%s/%s_data.mat',opts.pathFiles,opts.dataset);
-opts.fileImages = sprintf('%s/%s_images.mat',opts.pathFiles,opts.dataset);
+opts.fileImages = sprintf('%s/%s_images%s.bin',opts.pathFiles,opts.dataset,tagminH);
 opts.fileWriters = sprintf('%s/%s_writers.mat',opts.pathFiles,opts.dataset);
-opts.fileGMM = sprintf('%s/%s%s.mat',opts.dataFolder,opts.dataset,tagGMM);
-opts.filePCA = sprintf('%s/%s%s.mat',opts.dataFolder,opts.dataset,tagPCA);
-opts.filePHOCs = sprintf('%s/%s%s.mat',opts.dataFolder,opts.dataset,opts.tagPHOC);
-opts.fileFeatures = sprintf('%s/%s%s.mat',opts.dataFolder,opts.dataset,opts.tagFeatures);
+opts.fileGMM = sprintf('%s/%s%s.bin',opts.dataFolder,opts.dataset,tagGMM);
+opts.filePCA = sprintf('%s/%s%s.bin',opts.dataFolder,opts.dataset,tagPCA);
+opts.filePHOCs = sprintf('%s/%s%s.bin',opts.dataFolder,opts.dataset,opts.tagPHOC);
+opts.fileFeatures = sprintf('%s/%s%s.bin',opts.dataFolder,opts.dataset,opts.tagFeatures);
 opts.fileAttModels = sprintf('%s/%s_attModels%s%s%s.mat',opts.dataFolder,opts.dataset,opts.tagPHOC,opts.tagFeatures,tagBagging);
 opts.fileAttRepres = sprintf('%s/%s_attRepres%s%s%s.mat',opts.dataFolder,opts.dataset,opts.tagPHOC,opts.tagFeatures,tagBagging);
 opts.folderModels = sprintf('%s/models%s/',opts.dataFolder,tagBagging);
