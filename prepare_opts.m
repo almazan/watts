@@ -14,7 +14,7 @@ if ~exist('calib_c')
     mex -o util/bin/calib_c -O -largeArrayDims util/calib_c.c
 end
 if ~exist('computeStats_c')
-    mex -o util/bin/computeStats_c -O -largeArrayDims util/computeStats_c.c
+    mex -o util/bin/computeStats_c -O -largeArrayDims  CFLAGS="\$CFLAGS -std=c99" util/computeStats_c.c
 end
 if ~exist('phoc_mex')
     mex -o util/bin/phoc_mex -O -largeArrayDims util/phoc_mex.cpp
@@ -39,9 +39,16 @@ end
 if ~exist('computeFV_mex')
     if strcmp(computer,'MACI64')
         system('ln -s ../vlfeat-0.9.18/bin/maci64/libvl.dylib util/bin/libvl.dylib');
+        mex -o util/bin/computeFV_mex -O -largeArrayDims -I./util/vlfeat-0.9.18/ -L./util/vlfeat-0.9.18/bin/maci64 -lvl util/computeFV_mex.cpp
+    elseif strcmp(computer, 'GLNXA64')
+        system('ln -s ../vlfeat-0.9.18/bin/glnxa64/libvl.so util/bin/libvl.s0');
+        mex -o util/bin/computeFV_mex -O -largeArrayDims -I./util/vlfeat-0.9.18/ -L./util/vlfeat-0.9.18/bin/glnxa64 -lvl CFLAGS="\$CFLAGS -std=c99 -fopenmp" LDFLAGS="\$LDFLAGS -fopenmp"   util/computeFV_mex.cpp
+    else
+        error('Not supported platform');
     end
+       
     % Link the vlfeat binary and compile
-    mex -o util/bin/computeFV_mex -O -largeArrayDims -I./util/vlfeat-0.9.18/ -L./util/vlfeat-0.9.18/bin/maci64 -lvl util/computeFV_mex.cpp
+    
 end
 
 run('util/vlfeat-0.9.18/toolbox/vl_setup')
