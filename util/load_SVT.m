@@ -16,8 +16,7 @@ for j=1:length(data)
     [words(i).H,words(i).W, numC] = size(im);
     words(i).loc = [1 words(i).W 1 words(i).H];
     words(i).gttext = data(j).GroundTruth;
-    words(i).sLexi = data(j).smallLexi;
-    words(i).mLexi = data(j).mediumLexi;
+    words(i).sLexi = data(j).smallLexi;    
     i = i+1;
 end
 
@@ -32,7 +31,6 @@ for j=1:length(data)
     words(i).loc = [1 words(i).W 1 words(i).H];
     words(i).gttext = data(j).GroundTruth;
     words(i).sLexi = data(j).smallLexi;
-    words(i).mLexi = data(j).mediumLexi;
     i = i+1;
 end
 
