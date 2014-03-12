@@ -1,4 +1,4 @@
-function [data,images] = load_IAM(opts)
+function data = load_IAM(opts)
 disp('* Reading IAM info *');
 
 %% Reading writers information
@@ -31,7 +31,7 @@ nWords = length(input{1});
 
 margin=16;
 pathIm = '';
-images = cell(nWords,1);
+
 for j=1:nWords
     words(j).pathIm = [opts.pathImages input{1}{j}];
     words(j).pathIm = [words(j).pathIm '.png'];
@@ -50,9 +50,9 @@ for j=1:nWords
     [H,W] = size(imDoc);
     x1 = max(loc(1),1); x2 = min(loc(2),W);
     y1 = max(loc(3),1); y2 = min(loc(4),H);
-    images{j} = imDoc(y1:y2,x1:x2);
+    im = imDoc(y1:y2,x1:x2);
     words(j).loc = [x1 x2 y1 y2];
-    [words(j).H,words(j).W] = size(images{j});
+    [words(j).H,words(j).W] = size(im);
     words(j).gttext = input{6}{j};
     
     words(j).docId = input{1}{j};
@@ -84,12 +84,10 @@ for i=1:length(words)
 end
 
 %% Update writer information
-%     if strcmp(opts.dataset,'IAM')
 for i=1:length(words)
     docId = words(i).docId;
     words(i).writerId = writers.docs(docId);
 end
-%     end
 
 %% Output
 data.words = words;

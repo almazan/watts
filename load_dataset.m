@@ -3,9 +3,8 @@ disp('* Loading dataset *');
 
 if ~exist(opts.fileData, 'file')
     % Loading dataset images and GT
-    if strcmpi(opts.dataset,'IAM')
-        error('Not working');
-        [data,images] = load_IAM(opts);
+    if strcmpi(opts.dataset,'IAM')        
+        data = load_IAM(opts);
     elseif strcmpi(opts.dataset,'IIIT5K')
         data = load_IIIT5K(opts);
     elseif strcmpi(opts.dataset,'SVT')        

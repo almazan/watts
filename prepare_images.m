@@ -38,7 +38,7 @@ if ~exist(opts.fileImages, 'file')
             end
         end
         
-        patch = im(data.words(i).loc(1):data.words(i).loc(3),data.words(i).loc(2):data.words(i).loc(4));
+        patch = im(data.words(i).loc(3):data.words(i).loc(4),data.words(i).loc(1):data.words(i).loc(2));
         [H,W] = size(patch);
         if (data.words(i).H~=H || data.words(i).W~=W)
             error('something wrong happened!');
