@@ -9,7 +9,7 @@ if ~exist(opts.fileAttModels,'file')
             % When running the code in a cluster
         else
             % When running the code in a single machine
-            load(opts.fileFeatures,'features');
+            features = readMat(opts.fileFeatures);            
             % Training and validation sets are concatenated
             data.feats_training = features(:, [find(data.idxTrain), find(data.idxValidation)]);
             data.phocs_training = [data.phocsTr data.phocsVa];
@@ -27,7 +27,7 @@ if ~exist(opts.fileAttModels,'file')
     % space
     W = [attModels(:).W];
     if ~exist('features','var');
-        load(opts.fileFeatures,'features');
+        features = readMat(opts.fileFeatures);
     end
     feats_va = features(:,data.idxValidation);
     if ~isempty(feats_va)
@@ -38,9 +38,11 @@ if ~exist(opts.fileAttModels,'file')
     feats_te = features(:,data.idxTest);
     attReprTe = W'*feats_te;
     
-    save(opts.fileAttRepres,'attReprTr','attReprVa','attReprTe');
-    save(opts.fileAttModels,'attModels');
+    writeMat(single([[attModels.W];[attModels.B]]), opts.fileAttModels);
+    writeMat(single(attReprTr), opts.fileAttRepresTr);
+    writeMat(single(attReprVa), opts.fileAttRepresVal);
+    writeMat(single(attReprTe), opts.fileAttRepresTe);    
 else
-    load(opts.fileAttModels);
+    attModels = readMat(opts.fileAttModels);    
 end
 end

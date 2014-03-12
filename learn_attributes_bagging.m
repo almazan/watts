@@ -20,7 +20,7 @@ attFeatsTr = single(zeros(numAtt,numSamples));
 att_models = struct('W',[],'B',[],'numPosSamples',[]);
 
 % For each attribute
-for idxAtt = 1:numAtt
+parfor idxAtt = 1:numAtt
     [model, encodedTr] = learn_att(idxAtt,feats, phocs,dimFeats, numSamples, opts, params);
     att_models(idxAtt) = model;
     attFeatsTr(idxAtt,:) = encodedTr;

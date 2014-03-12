@@ -1,7 +1,9 @@
 function [embedding,mAP,bestmAPval] = learn_common_subspace(opts,data)
 
 %% Load attribute representations
-load(opts.fileAttRepres,'attReprTr','attReprVa');
+attReprTr = readMat(opts.fileAttRepresTr);
+attReprVa = readMat(opts.fileAttRepresVal);
+
 
 data.attReprTr = single(attReprTr);
 data.phocsTr = single(data.phocsTr);

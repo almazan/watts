@@ -8,7 +8,8 @@ else
 end
 
 %% Load attribute representations
-load(opts.fileAttRepres,'attReprTe');
+attReprTe = readMat(opts.fileAttRepresTe);
+
 
 data.attReprTe = single(attReprTe);
 data.phocsTe = single(data.phocsTe);

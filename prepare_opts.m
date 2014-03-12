@@ -36,20 +36,6 @@ if ~exist('util/vlfeat-0.9.18/toolbox/mex','dir')
     end
 end
 
-if ~exist('computeFV_mex')
-    if strcmp(computer,'MACI64')
-        system('ln -s ../vlfeat-0.9.18/bin/maci64/libvl.dylib util/bin/libvl.dylib');
-        mex -o util/bin/computeFV_mex -O -largeArrayDims -I./util/vlfeat-0.9.18/ -L./util/vlfeat-0.9.18/bin/maci64 -lvl util/computeFV_mex.cpp
-    elseif strcmp(computer, 'GLNXA64')
-        system('ln -s ../vlfeat-0.9.18/bin/glnxa64/libvl.so util/bin/libvl.s0');
-        mex -o util/bin/computeFV_mex -O -largeArrayDims -I./util/vlfeat-0.9.18/ -L./util/vlfeat-0.9.18/bin/glnxa64 -lvl CFLAGS="\$CFLAGS -std=c99 -fopenmp" LDFLAGS="\$LDFLAGS -fopenmp"   util/computeFV_mex.cpp
-    else
-        error('Not supported platform');
-    end
-       
-    % Link the vlfeat binary and compile
-    
-end
 
 run('util/vlfeat-0.9.18/toolbox/vl_setup')
 
@@ -123,8 +109,8 @@ opts.CCA.verbose = 1;
 opts.TestKCCA = 1;
 opts.KCCA.M = [2500];
 opts.KCCA.G = [40];
-opts.KCCA.Dims = [192,256];
-opts.KCCA.Reg = [1e-5,1e-6];
+opts.KCCA.Dims = [128];
+opts.KCCA.Reg = [1e-5];
 opts.KCCA.verbose = 1;
 
 opts.evalRecog = 1;
@@ -139,8 +125,8 @@ elseif strcmp(opts.dataset,'IAM')
     opts.swFile = 'data/swIAM.txt';
     opts.evalRecog = 0;
 elseif strcmp(opts.dataset,'IIIT5K')
-    opts.minH = 100;
-    opts.maxH = 250;
+    opts.minH = 150;
+    opts.maxH = 150;
     opts.doMinibox = 0;
 elseif strcmp(opts.dataset,'SVT')
     opts.minH = 100;
@@ -199,8 +185,10 @@ opts.fileGMM = sprintf('%s/%s%s.bin',opts.dataFolder,opts.dataset,tagGMM);
 opts.filePCA = sprintf('%s/%s%s.bin',opts.dataFolder,opts.dataset,tagPCA);
 opts.filePHOCs = sprintf('%s/%s%s.bin',opts.dataFolder,opts.dataset,opts.tagPHOC);
 opts.fileFeatures = sprintf('%s/%s%s.bin',opts.dataFolder,opts.dataset,opts.tagFeatures);
-opts.fileAttModels = sprintf('%s/%s_attModels%s%s%s.mat',opts.dataFolder,opts.dataset,opts.tagPHOC,opts.tagFeatures,tagBagging);
-opts.fileAttRepres = sprintf('%s/%s_attRepres%s%s%s.mat',opts.dataFolder,opts.dataset,opts.tagPHOC,opts.tagFeatures,tagBagging);
+opts.fileAttModels = sprintf('%s/%s_attModels%s%s%s.bin',opts.dataFolder,opts.dataset,opts.tagPHOC,opts.tagFeatures,tagBagging);
+opts.fileAttRepresTr = sprintf('%s/%s_attRepresTr%s%s%s.bin',opts.dataFolder,opts.dataset,opts.tagPHOC,opts.tagFeatures,tagBagging);
+opts.fileAttRepresVal = sprintf('%s/%s_attRepresVal%s%s%s.bin',opts.dataFolder,opts.dataset,opts.tagPHOC,opts.tagFeatures,tagBagging);
+opts.fileAttRepresTe = sprintf('%s/%s_attRepresTe%s%s%s.bin',opts.dataFolder,opts.dataset,opts.tagPHOC,opts.tagFeatures,tagBagging);
 opts.folderModels = sprintf('%s/models%s/',opts.dataFolder,tagBagging);
 opts.modelsLog = sprintf('%s/learning.log',opts.folderModels);
 if ~exist(opts.folderModels,'dir')

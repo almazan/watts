@@ -1,4 +1,5 @@
-#include "mex.h"
+//#include "mex.h"
+#include <stdio.h>
 #include "string.h"
 #include <string>
 #include <cmath>
@@ -17,7 +18,8 @@ extern "C" {
 
 enum {GAUSSIAN, TRIANGULAR} ;
 
-
+#define mexPrintf printf
+#define mxGetNaN float
 
 int max_int(int *seq,int N)
 {
@@ -96,8 +98,7 @@ return;
     long j;
     for(j = 0; j < d; j++)
         w[j] += xi[j] * a;
-    return;
-    
+    return;    
 }
 
 float vec_dotprod(const float * __restrict__ xi,
@@ -125,6 +126,31 @@ return accu[0] + accu[1] + accu[2] + accu[3];
         accu += xi[j] * w[j];
     return accu;
 }
+
+
+float vec_sum(const float * __restrict__ xi, long d) {
+    
+    if(((long)xi & 15) == 0  && (d & 3) == 0 ) {
+        __v4sf *xi4 = (__v4sf*)(void*)xi;        
+        __v4sf accu4 = {0, 0, 0, 0};
+        d /= 4;
+
+        while(d--) accu4 += (*xi4++) ;
+
+
+        float *accu = (float*)(void*)&accu4;
+
+        return accu[0] + accu[1] + accu[2] + accu[3];
+    }
+    /* reference version */
+    long j;
+    double accu = 0;
+    for(j = 0; j < d; j++)
+        accu += xi[j];
+    return accu;
+}
+
+
 
 
 void freePCA(pca_t **model)
@@ -245,6 +271,7 @@ float otsu(img_t *img)
             c++;
         }
     }
+    free(sigma_b_squared);
     return ((acc/c)/255.0);
 }
 
@@ -329,8 +356,35 @@ void extractWordBox(img_t *image, float px,float py, boundingBox_t *box){
     box->w = bestEnd - bestStart + 1;
     box->cx = box->x + box->w/2;
     mexPrintf("%d %d %d %d\n", box->x, box->y, box->w, box->h);
+    
+    free(countRows);
+    free(countCols);
+    free(countRowsCum);
+    free(countColsCum);        
     return;
 }
+
+float *ApplyPcaAndAppendXY(float *data, float *frames, int N, int Din, int dout, pca_t *model,boundingBox_t *bbox)
+{
+        float *out = (float *)malloc(N * (dout +2)* sizeof(float));        
+        float *pout = out;
+        float *pf = frames;
+        for (int n=0; n < N; n++)
+        {            
+            vec_addto(&data[n*Din], -1, model->mu, Din);                     
+            for (int d=0; d < dout;d++ )
+            {
+                *pout++ = vec_dotprod(&data[n*Din], &model->eigv[d*Din], Din);                
+            }
+            /* XY */                    
+            *pout++ = (*pf++ - bbox->cx)/bbox->w;
+            *pout++ = (*pf++ - bbox->cy)/bbox->h;
+            /* skip contrast and scale in frame*/
+            pf+=2;
+        }
+        return out;
+}
+
 
 
 float *appendXY(float *descr, float *frames, int N, int D, boundingBox_t *bbox){
@@ -723,7 +777,7 @@ void PHOW(img_t *image, int step, int *sizes, int nSizes, int *nFrames, int *des
     }
     
     
-    
+#if 0    
     /* Divide by 255, square root, and normalize with a 0.25 norm */
     float s=0;
     pDescrs=*descrsOut;
@@ -745,7 +799,22 @@ void PHOW(img_t *image, int step, int *sizes, int nSizes, int *nFrames, int *des
             *pDescrs2++*=s;
         }
     }
-    
+#else
+    /* Same but easier */   
+    pDescrs=*descrsOut;
+    #pragma omp parallel for
+    for (int i=0; i < *nFrames;i++)
+    {        
+        float *pd = &pDescrs[i* *descrSize];
+        float s = vec_sum(pd, *descrSize);
+        float k = 1.0/sqrt(255.0*s);
+        for (int j=0; j < *descrSize;j++){
+            *pd = sqrt(*pd*k);
+            pd++;
+        }
+    }                    
+#endif
+            
     
     /* Free stuff */
     for (int i=0; i < opts.nsizes; i++)
@@ -775,10 +844,7 @@ void getFV(img_t *image,pca_t *pca, gmm_t *gmm, int step, int * sizes, int nSize
     /* PHOW */
     PHOW(image, step, sizes, nSizes, &nFrames, &descrSize, &frames, &descrs);
     
-    /* PCA */
-    float *projected = ApplyPca(descrs,nFrames, descrSize, pca->d, pca);
-    free(descrs);
-    /* Append coordinates (minibox?) */
+    /* Extract coordinates (minibox?) */
     boundingBox_t box;
     if (!doMiniBox)
     {
@@ -795,14 +861,21 @@ void getFV(img_t *image,pca_t *pca, gmm_t *gmm, int step, int * sizes, int nSize
         
     }
     
-    float *descrxy = appendXY(projected,  frames, nFrames, pca->d,  &box);
-    
+    /* PCA  and append */
+    /*
+    float *projected = ApplyPca(descrs,nFrames, descrSize, pca->d, pca);    
+    float *descrxy = appendXY(projected,  frames, nFrames, pca->d,  &box);    
     free(projected);
-    free(frames);
+     */
     
+    float *descrxy = ApplyPcaAndAppendXY(descrs,frames,nFrames, descrSize, pca->d, pca, &box);    
+    
+    free(descrs);        
+    free(frames);
     
     /* Compute fv */
     vl_fisher_encode(fv, VL_TYPE_FLOAT,gmm->mu, gmm->D, gmm->G, gmm->sigma, gmm->w, descrxy, nFrames,VL_FISHER_FLAG_IMPROVED);
+    free(descrxy);
 }
 
 long int * readImagesToc(char *imagesPath, int *nImages)
@@ -818,7 +891,7 @@ long int * readImagesToc(char *imagesPath, int *nImages)
 img_t *readAndConvertImage(FILE *fp)
 {
     
-    img_t *im = (img_t*)malloc(sizeof(img_t));
+        img_t *im = (img_t*)malloc(sizeof(img_t));        
         fread(&(im->W), sizeof(int), 1, fp);
         fread(&(im->H), sizeof(int), 1, fp);
         int nd = im->W * im->H;
@@ -827,14 +900,14 @@ img_t *readAndConvertImage(FILE *fp)
         fread(buffer, sizeof(unsigned char), nd, fp);
         for (int i=0; i < nd;i++)
             im->data[i] = ((float)buffer[i])/255.0;
-        free(buffer);
+        free(buffer);        
         return im;
 }
 
 img_t** readImagesBatch(char *imagesPath, long int *toc, int start, int end)
 {
     int nImages = end-start;
-    img_t** images = (img_t**)malloc(nImages*sizeof(*images));
+    img_t** images = (img_t**)malloc(nImages*sizeof(*images));    
     FILE *f = fopen(imagesPath, "rb");
     for (int i=start; i < end; i++)
     {
@@ -864,26 +937,24 @@ void processImages(char *imagesPath,pca_t * pca, gmm_t *gmm, int step, int *size
     fillWithNans(f, fvdim*nImages);
     fclose(f);
     
-    int imagesPerBatch = 1000;
+    int imagesPerBatch = 25;
     int nBatches = (int)ceil(((float)nImages)/imagesPerBatch);
     
     float *buffer = (float*)malloc(imagesPerBatch * fvdim * sizeof(float));
     
     
     for (int cb=0; cb < nBatches; cb++)
-    {
-        mexPrintf("Batch %d/%d\n",cb,nBatches);
+    {        
         int sp = cb * imagesPerBatch;
         int ep = (cb+1)*imagesPerBatch > nImages?nImages:(cb+1)*imagesPerBatch;
         int nInBatch = ep-sp;
         images = readImagesBatch(imagesPath, toc, sp,ep);
         
         
-        #pragma omp parallel for
+        //#pragma omp parallel for num_threads(12)
         for (int cf = 0; cf < nInBatch; cf++)
-        {
-            getFV(images[cf+sp], pca, gmm, step, sizes, nSizes, doMinibox, &buffer[cf*fvdim]);
-            
+        {            
+            getFV(images[cf], pca, gmm, step, sizes, nSizes, doMinibox, &buffer[cf*fvdim]);            
         }
         
         /* Dump the current fvs */
@@ -893,11 +964,13 @@ void processImages(char *imagesPath,pca_t * pca, gmm_t *gmm, int step, int *size
         fclose(f);
         
         freeImages(&images,nInBatch);
+        return;
     }
     free(toc);
     free(buffer);
 }
 
+#if 0
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
     char *imagesPath = mxArrayToString(prhs[0]);
@@ -921,4 +994,29 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     freeGMM(&gmm);
     return;
 }
+#else
+int main(int argc, char *argv[])
+{
+    char imagesPath[] = "/home/agordo/workspace/watts-git/words-att/data/files/IIIT5K_images_minH100_maxH250.bin";
+    char PCAPath[] = "/home/agordo/workspace/watts-git/words-att/data/files/IIIT5K_PHOCs_l2345_lb2_nb50_FV_PCA62_GMM16x2x6x64_minH100_maxH250/IIIT5K_PCA62.bin";
+    char GMMPath[] = "/home/agordo/workspace/watts-git/words-att/data/files/IIIT5K_PHOCs_l2345_lb2_nb50_FV_PCA62_GMM16x2x6x64_minH100_maxH250/IIIT5K_GMM16x2x6x64_minH100_maxH250.bin";
+    int step = 3;
+    int sizes[] ={2,4,6,8,10,12};
+    int nSizes = 6 ;
+    int doMinibox = 0;
+    char outPath[] = "/home/agordo/workspace/watts-git/words-att/data/files/IIIT5K_PHOCs_l2345_lb2_nb50_FV_PCA62_GMM16x2x6x64_minH100_maxH250/IIIT5K_FV_PCA62_GMM16x2x6x64_minH100_maxH250.bin";
+    pca_t *pca = readPCA(PCAPath);
+    gmm_t *gmm = readGMM(GMMPath);
+    
+    
+    processImages(imagesPath, pca, gmm, step, sizes, nSizes, doMinibox, outPath);
+    
+    
+    
+    freePCA(&pca);
+    freeGMM(&gmm);
+    return 0;
+}
+
+#endif
 
