@@ -8,9 +8,8 @@ if ~exist(opts.fileData, 'file')
         [data,images] = load_IAM(opts);
     elseif strcmpi(opts.dataset,'IIIT5K')
         data = load_IIIT5K(opts);
-    elseif strcmpi(opts.dataset,'SVT')
-        error('Not working');
-        [data,images] = load_SVT(opts);
+    elseif strcmpi(opts.dataset,'SVT')        
+        data = load_SVT(opts);
     elseif strcmpi(opts.dataset,'ICDAR11')
         error('Not working');
         [data,images] = load_ICDAR11(opts);
