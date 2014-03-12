@@ -15,6 +15,10 @@ data.attReprTe = single(attReprTe);
 data.phocsTe = single(data.phocsTe);
 data.wordClsTe = single(data.wordClsTe);
 
+% Augment phocs with length?
+%W={data.wordsTe.gttext};
+%data.phocsTe = [data.phocsTe;encodeWordsLength(W,20)];
+
 mAP.fv = [];
 mAP.direct = [];
 mAP.platts = [];
@@ -54,7 +58,9 @@ if opts.evalRecog
         lexicon = extract_lexicon(opts,data);
     else
         load(opts.fileLexicon,'lexicon')
-    end
+    end    
+    
+    %lexicon.phocs = [lexicon.phocs;encodeWordsLength(lexicon.words,20)];
     
     % Embed the test attributes representation (attRepreTe_emb)
     matx = emb.rndmatx(1:emb.M,:);

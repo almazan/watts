@@ -92,7 +92,7 @@ opts.sgdparams.weightNeg = 1;
 % Options embedding
 opts.RemoveStopWords = 0;
 opts.TestFV = 0;
-opts.TestDirect = 1;
+opts.TestDirect = 0;
 
 opts.TestPlatts = 0;
 opts.Platts.verbose = 1;
@@ -125,8 +125,8 @@ elseif strcmp(opts.dataset,'IAM')
     opts.swFile = 'data/swIAM.txt';
     opts.evalRecog = 0;
 elseif strcmp(opts.dataset,'IIIT5K')
-    opts.minH = 150;
-    opts.maxH = 150;
+    opts.minH = 80;
+    opts.maxH = 80;
     opts.doMinibox = 0;
 elseif strcmp(opts.dataset,'SVT')
     opts.minH = 100;

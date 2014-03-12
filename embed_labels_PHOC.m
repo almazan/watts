@@ -11,8 +11,7 @@ if  ~exist(opts.filePHOCs,'file')
     
     lf = @(x) lower(x.gttext);
     W = arrayfun(lf, data.words,'UniformOutput', false);
-    
-    
+        
     phocsuni = phoc_mex(W, voc, int32(opts.levels));
     phocsbi = phoc_mex(W, opts.bgrams, int32(opts.levelsB));
     phocs = [phocsuni;phocsbi];   
