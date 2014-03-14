@@ -104,7 +104,7 @@ if opts.evalRecog
             end
         end
         if strcmpi(opts.dataset,'IIIT5K')
-            mediumLexicon = data.wordsTe(i).mLexi;
+            mediumLexicon = unique(data.wordsTe(i).mLexi);
             [~,~,ind] = inters(mediumLexicon,words,'stable');
             scores = feat'*phocs_cca(:,ind);
             randInd = randperm(length(scores));
