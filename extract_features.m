@@ -17,18 +17,9 @@ if  ~exist(opts.fileFeatures,'file')
         writePCA(PCA, opts.filePCA); 
         clear images;
     end
-    
-    % Extracts FV representation from dataset images using the GMM and PCA
-    % models
-    
-    %GMM = readGMM(opts.fileGMM);
-    %PCA = readGMM(opts.filePCA);
-    %images = readImages(opts.fileImages);
-    %tic;feats = extract_FV_features(opts,images,GMM,PCA);disp(toc);
-    
+        
     extract_FV_features_fast(opts);
     
-    %save(opts.fileFeatures,'features','-v7.3');
 end
 
 end
