@@ -11,7 +11,10 @@ elseif strcmpi(opts.dataset,'ICDAR11')
 elseif strcmpi(opts.dataset,'SVT')
     words=[words(:).sLexi];
     words = unique(words);
+elseif strcmpi(opts.dataset, 'LP')
+    words = unique({words.gttext})';
 end
+
 
 % Extracts the PHOC embedding for every word in the lexicon
 voc = opts.unigrams;

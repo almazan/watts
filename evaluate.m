@@ -58,7 +58,7 @@ if opts.evalRecog
         lexicon = extract_lexicon(opts,data);
     else
         load(opts.fileLexicon,'lexicon')
-    end    
+    end
     
     %lexicon.phocs = [lexicon.phocs;encodeWordsLength(lexicon.words,10)];
     
@@ -88,21 +88,21 @@ if opts.evalRecog
     for i=1:N
         feat = attReprTe_emb(:,i);
         gt = data.wordsTe(i).gttext;
-        
-        smallLexicon = data.wordsTe(i).sLexi;
-        [~,~,ind] = inters(smallLexicon,words,'stable');
-        scores = feat'*phocs_cca(:,ind);
-        randInd = randperm(length(scores));
-        scores = scores(randInd);
-        [scores,I] = sort(scores,'descend');
-        I = randInd(I);
-        
-        if strcmpi(gt,smallLexicon{I(1)})
-            p1small(i) = 1;
-        else
-            p1small(i) = 0;
+        if ~strcmpi(opts.dataset, 'LP')
+            smallLexicon = unique(data.wordsTe(i).sLexi);
+            [~,~,ind] = inters(smallLexicon,words,'stable');
+            scores = feat'*phocs_cca(:,ind);
+            randInd = randperm(length(scores));
+            scores = scores(randInd);
+            [scores,I] = sort(scores,'descend');
+            I = randInd(I);
+            
+            if strcmpi(gt,smallLexicon{I(1)})
+                p1small(i) = 1;
+            else
+                p1small(i) = 0;
+            end
         end
-        
         if strcmpi(opts.dataset,'IIIT5K')
             mediumLexicon = data.wordsTe(i).mLexi;
             [~,~,ind] = inters(mediumLexicon,words,'stable');
@@ -156,9 +156,9 @@ end
 % Ugly hack to deal with the lack of stable intersection in old versions of
 % matlab
 function [empty1, empty2, ind] = stableintersection(a, b, varargin)
-    empty1=0;
-    empty2=0;
-    [~,ia,ib] = intersect(a,b); 
-    [~, tmp2] = sort(ia);
-    ind = ib(tmp2);
+empty1=0;
+empty2=0;
+[~,ia,ib] = intersect(a,b);
+[~, tmp2] = sort(ia);
+ind = ib(tmp2);
 end

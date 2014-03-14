@@ -17,7 +17,9 @@ if ~exist(opts.fileData, 'file')
         [data,images] = load_GW(opts);
     elseif strcmpi(opts.dataset,'ESP')
         error('Not working');
-        [data,images] = load_ESP(opts);
+        [data,images] = load_ESP(opts);    
+    elseif strcmpi(opts.dataset,'LP')        
+        data = load_LP(opts);
     end
     save(opts.fileData,'data');
 else

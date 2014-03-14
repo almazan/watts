@@ -39,6 +39,14 @@ if ~exist(opts.fileImages, 'file')
         end
         
         patch = im(data.words(i).loc(3):data.words(i).loc(4),data.words(i).loc(1):data.words(i).loc(2));
+        
+        % Move to single and equalize if necessary
+        patch = im2single(patch);
+        m = max(max(patch));
+        if m < 0.2
+            patch = patch*0.2/m;
+        end
+                             
         [H,W] = size(patch);
         if (data.words(i).H~=H || data.words(i).W~=W)
             error('something wrong happened!');
@@ -52,7 +60,7 @@ if ~exist(opts.fileImages, 'file')
         end
         
         [H,W,numC] = size(patch);
-
+        % Save as uint8
         fwrite(fid, int32(W),'int32');
         fwrite(fid, int32(H), 'int32');
         fwrite(fid, im2uint8(patch), 'uint8');

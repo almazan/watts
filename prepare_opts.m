@@ -43,7 +43,7 @@ run('util/vlfeat-0.9.18/toolbox/vl_setup')
 rng('default');
 
 % Select the dataset
-opts.dataset = 'IAM';
+opts.dataset = 'SVT';
 
 opts.path_datasets = '/local/agordo/watts/datasets';
 opts.pathDataset = sprintf('%s/%s/',opts.path_datasets,opts.dataset);
@@ -109,7 +109,7 @@ opts.CCA.verbose = 0;
 opts.TestKCCA = 1;
 opts.KCCA.M = [2500];
 opts.KCCA.G = [40];
-opts.KCCA.Dims = [256];
+opts.KCCA.Dims = [128];
 opts.KCCA.Reg = [1e-5];
 opts.KCCA.verbose = 1;
 
@@ -137,6 +137,10 @@ elseif strcmp(opts.dataset,'SVT')
 elseif strcmp(opts.dataset,'ICDAR11')
     opts.minH = 100;
     opts.maxH = 250;
+    opts.doMinibox = 0;
+elseif strcmp(opts.dataset,'LP')
+    opts.minH = 80;
+    opts.maxH = 80;
     opts.doMinibox = 0;
 end
 
