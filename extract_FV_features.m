@@ -7,15 +7,6 @@ for i=1:length(images)
     fprintf('Extracting FV representation from image %d\n',i);
     
     im = images{i};
-    
-%     [height,width] = size(im);
-%     if height<opts.minH
-%         ar = height/width;
-%         height = opts.minH;
-%         width = round(height/ar);
-%         im = imresize(im, [height,width]);
-%     end
-%     
     [height,width] = size(im);
     im = im2single(im);
     
