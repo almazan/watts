@@ -5,7 +5,7 @@ disp('**************************************');
 disp('***************   FV   ***************');
 disp('**************************************');
 
-load(opts.fileFeatures,'features');                       
+features = readMat(opts.fileFeatures);                   
 feats_te = features(:,DATA.idxTest);
 
 %Evaluate

@@ -43,9 +43,9 @@ run('util/vlfeat-0.9.18/toolbox/vl_setup')
 rng('default');
 
 % Select the dataset
-opts.dataset = 'IIIT5K';
+opts.dataset = 'IAM';
 
-opts.path_datasets = 'datasets';
+opts.path_datasets = '/local/agordo/watts/datasets';
 opts.pathDataset = sprintf('%s/%s/',opts.path_datasets,opts.dataset);
 opts.pathImages = sprintf('%s/%s/images/',opts.path_datasets,opts.dataset);
 opts.pathDocuments = sprintf('%s/%s/documents/',opts.path_datasets,opts.dataset);
@@ -95,7 +95,7 @@ opts.TestFV = 0;
 opts.TestDirect = 0;
 
 opts.TestPlatts = 0;
-opts.Platts.verbose = 1;
+opts.Platts.verbose = 0;
 
 opts.TestRegress = 0;
 opts.Reg.Reg = [1e-1,1e-2,1e-3,1e-4];
@@ -104,12 +104,12 @@ opts.Reg.verbose = 1;
 opts.TestCCA = 0;
 opts.CCA.Dims = [96,128];
 opts.CCA.Reg = [1e-4,1e-5,1e-6];
-opts.CCA.verbose = 1;
+opts.CCA.verbose = 0;
 
 opts.TestKCCA = 1;
 opts.KCCA.M = [2500];
 opts.KCCA.G = [40];
-opts.KCCA.Dims = [128];
+opts.KCCA.Dims = [256];
 opts.KCCA.Reg = [1e-5];
 opts.KCCA.verbose = 1;
 
@@ -124,13 +124,15 @@ elseif strcmp(opts.dataset,'IAM')
     opts.RemoveStopWords = 1;
     opts.swFile = 'data/swIAM.txt';
     opts.evalRecog = 0;
+    opts.minH = 80;
+    opts.maxH = 80;
 elseif strcmp(opts.dataset,'IIIT5K')
     opts.minH = 80;
     opts.maxH = 80;
     opts.doMinibox = 0;
 elseif strcmp(opts.dataset,'SVT')
-    opts.minH = 100;
-    opts.maxH = 250;
+    opts.minH = 80;
+    opts.maxH = 80;
     opts.doMinibox = 0;
 elseif strcmp(opts.dataset,'ICDAR11')
     opts.minH = 100;
@@ -169,7 +171,7 @@ opts.tagPHOC = sprintf('_PHOCs%s%s%s',tagLevels,tagLevelsB,tagNumB);
 opts.tagFeatures = sprintf('%s%s%s%s',tagFeats,tagPCA,tagGMM,tagFold);
 
 % Paths and files
-opts.pathData = './data';
+opts.pathData = '/local/agordo/watts/data';
 opts.pathFiles = sprintf('%s/files',opts.pathData);
 if ~exist(opts.pathData,'dir')
     mkdir(opts.pathData);

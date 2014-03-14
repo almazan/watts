@@ -16,8 +16,8 @@ data.wordClsTr = data.wordClsTr(keep);
 data.labelsTr = data.labelsTr(keep);
 
 % Augment phocs with length?
-%W={data.wordsTr.gttext};
-%data.phocsTr = [data.phocsTr;encodeWordsLength(W,20)];
+%W={data.wordsTr(keep).gttext};
+%data.phocsTr = [data.phocsTr;encodeWordsLength(W,10)];
 
 %% Randomize train
 p = randperm(size(data.attReprTr,2));

@@ -64,7 +64,7 @@ for cb=1:nBatches
     featsBatch(isnan(featsBatch)) = 0;
     % Write the batch
     fid = fopen(opts.fileFeatures, 'r+');    
-    fseek(fid, 2*4  + (cb-1)*imagesPerBatch*opts.FVdim * 4, 'bof');
+    fseek(fid, 2*4  + (int64(cb)-1)*imagesPerBatch*opts.FVdim * 4, 'bof');
     fwrite(fid, featsBatch(:,1:nInBatch), 'single');        
 end
 disp(toc);

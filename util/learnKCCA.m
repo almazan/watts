@@ -25,6 +25,7 @@ for G=opts.KCCA.G
     RandStream.setGlobalStream(RandStream('mt19937ar','seed',0));
     rndmatx = normrnd(0,1/G, 2500,Dx);
     rndmaty = normrnd(0,1/G, 2500,Dy);
+    
 
     for M=opts.KCCA.M
         % Cut slice

@@ -5,8 +5,8 @@ eval(sprintf('opts = %s();',optsfile));
 load(opts.fileSets,'idxTrain','idxValidation','idxTest');
 phocs = readMat(opts.filePHOCs);
 features = readMat(opts.fileFeatures);            
-features = features(:, [find(idxTrain), find(idxValidation)]);
-phocs = phocs(:, [find(idxTrain), find(idxValidation)]);
+features = features(:, [find(idxTrain);find(idxValidation)]);
+phocs = phocs(:, [find(idxTrain); find(idxValidation)]);
 
 params = opts.sgdparams;
 [numAtt,numSamples] = size(phocs);
