@@ -132,8 +132,8 @@ elseif strcmp(opts.dataset,'SVT')
     opts.maxH = 80;
     opts.doMinibox = 0;
 elseif strcmp(opts.dataset,'ICDAR11')
-    opts.minH = 100;
-    opts.maxH = 250;
+    opts.minH = 80;
+    opts.maxH = 80;
     opts.doMinibox = 0;
 elseif strcmp(opts.dataset,'LP')
     opts.minH = 80;

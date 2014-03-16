@@ -15,7 +15,6 @@ elseif strcmpi(opts.dataset, 'LP')
     words = unique({words.gttext})';
 end
 
-
 % Extracts the PHOC embedding for every word in the lexicon
 voc = opts.unigrams;
 if opts.considerDigits
