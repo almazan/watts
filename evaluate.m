@@ -8,11 +8,16 @@ else
 end
 
 %% Load attribute representations
-load(opts.fileAttRepres,'attReprTe');
+attReprTe = readMat(opts.fileAttRepresTe);
+
 
 data.attReprTe = single(attReprTe);
 data.phocsTe = single(data.phocsTe);
 data.wordClsTe = single(data.wordClsTe);
+
+% Augment phocs with length?
+%W={data.wordsTe.gttext};
+%data.phocsTe = [data.phocsTe;encodeWordsLength(W,10)];
 
 mAP.fv = [];
 mAP.direct = [];
@@ -55,6 +60,8 @@ if opts.evalRecog
         load(opts.fileLexicon,'lexicon')
     end
     
+    %lexicon.phocs = [lexicon.phocs;encodeWordsLength(lexicon.words,10)];
+    
     % Embed the test attributes representation (attRepreTe_emb)
     matx = emb.rndmatx(1:emb.M,:);
     tmp = matx*data.attReprTe;
@@ -81,23 +88,23 @@ if opts.evalRecog
     for i=1:N
         feat = attReprTe_emb(:,i);
         gt = data.wordsTe(i).gttext;
-        
-        smallLexicon = data.wordsTe(i).sLexi;
-        [~,~,ind] = inters(smallLexicon,words,'stable');
-        scores = feat'*phocs_cca(:,ind);
-        randInd = randperm(length(scores));
-        scores = scores(randInd);
-        [scores,I] = sort(scores,'descend');
-        I = randInd(I);
-        
-        if strcmpi(gt,smallLexicon{I(1)})
-            p1small(i) = 1;
-        else
-            p1small(i) = 0;
+        if ~strcmpi(opts.dataset, 'LP')
+            smallLexicon = unique(data.wordsTe(i).sLexi);
+            [~,~,ind] = inters(smallLexicon,words,'stable');
+            scores = feat'*phocs_cca(:,ind);
+            randInd = randperm(length(scores));
+            scores = scores(randInd);
+            [scores,I] = sort(scores,'descend');
+            I = randInd(I);
+            
+            if strcmpi(gt,smallLexicon{I(1)})
+                p1small(i) = 1;
+            else
+                p1small(i) = 0;
+            end
         end
-        
         if strcmpi(opts.dataset,'IIIT5K')
-            mediumLexicon = data.wordsTe(i).mLexi;
+            mediumLexicon = unique(data.wordsTe(i).mLexi);
             [~,~,ind] = inters(mediumLexicon,words,'stable');
             scores = feat'*phocs_cca(:,ind);
             randInd = randperm(length(scores));
@@ -149,9 +156,9 @@ end
 % Ugly hack to deal with the lack of stable intersection in old versions of
 % matlab
 function [empty1, empty2, ind] = stableintersection(a, b, varargin)
-    empty1=0;
-    empty2=0;
-    [~,ia,ib] = intersect(a,b); 
-    [~, tmp2] = sort(ia);
-    ind = ib(tmp2);
+empty1=0;
+empty2=0;
+[~,ia,ib] = intersect(a,b);
+[~, tmp2] = sort(ia);
+ind = ib(tmp2);
 end

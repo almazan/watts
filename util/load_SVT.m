@@ -1,11 +1,11 @@
-function [data,images] = load_SVT(opts)
+function [data] = load_SVT(opts)
 disp('* Reading SVT info *');
 
 load([opts.pathDataset 'traindata.mat']);
 load([opts.pathDataset 'testdata.mat']);
 
 i=1;
-images = {};
+
 data = traindata;
 for j=1:length(data)
     words(i).pathIm = [opts.pathDataset data(j).ImgName];
@@ -13,10 +13,10 @@ for j=1:length(data)
     if ndims(im)>2
         im = rgb2gray(im);
     end
-    images{i} = im;
-    [words(i).H,words(i).W] = size(images{i});
+    [words(i).H,words(i).W, numC] = size(im);
+    words(i).loc = [1 words(i).W 1 words(i).H];
     words(i).gttext = data(j).GroundTruth;
-    words(i).sLexi = data(j).smallLexi;
+    words(i).sLexi = data(j).smallLexi;    
     i = i+1;
 end
 
@@ -27,8 +27,8 @@ for j=1:length(data)
     if ndims(im)>2
         im = rgb2gray(im);
     end
-    images{i} = im;
-    [words(i).H,words(i).W] = size(images{i});
+    [words(i).H,words(i).W, numC] = size(im);
+    words(i).loc = [1 words(i).W 1 words(i).H];
     words(i).gttext = data(j).GroundTruth;
     words(i).sLexi = data(j).smallLexi;
     i = i+1;

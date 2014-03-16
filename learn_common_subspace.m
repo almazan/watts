@@ -1,7 +1,9 @@
 function [embedding,mAP,bestmAPval] = learn_common_subspace(opts,data)
 
 %% Load attribute representations
-load(opts.fileAttRepres,'attReprTr','attReprVa');
+attReprTr = readMat(opts.fileAttRepresTr);
+attReprVa = readMat(opts.fileAttRepresVal);
+
 
 data.attReprTr = single(attReprTr);
 data.phocsTr = single(data.phocsTr);
@@ -12,6 +14,10 @@ data.attReprTr = data.attReprTr(:,keep);
 data.phocsTr = data.phocsTr(:,keep);
 data.wordClsTr = data.wordClsTr(keep);
 data.labelsTr = data.labelsTr(keep);
+
+% Augment phocs with length?
+%W={data.wordsTr(keep).gttext};
+%data.phocsTr = [data.phocsTr;encodeWordsLength(W,10)];
 
 %% Randomize train
 p = randperm(size(data.attReprTr,2));

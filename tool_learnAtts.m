@@ -1,29 +1,19 @@
-function [att_models,attFeatsTr] = learn_attributes_bagging(opts,data)
-% Learns models using several folds of the training data.
-% Also produces the scores of the training samples with an unbiased model.
-% For each training sample, we get its score using a model constructed as
-% the average of all models that did not use that particular training
-% sample for training. This is done online.
+function   tool_learnAtts( optsfile, sp, ep)
+%UNTITLED Summary of this function goes here
+%   Detailed explanation goes here
+eval(sprintf('opts = %s();',optsfile));
+load(opts.fileSets,'idxTrain','idxValidation','idxTest');
+phocs = readMat(opts.filePHOCs);
+features = readMat(opts.fileFeatures);            
+features = features(:, [find(idxTrain);find(idxValidation)]);
+phocs = phocs(:, [find(idxTrain); find(idxValidation)]);
 
-% Set params. eta, lbd, beta and bias_multiplier can receive multiple
-% values that will be crossvalidated for map.
 params = opts.sgdparams;
-
-feats = data.feats_training;
-phocs = data.phocs_training;
-
 [numAtt,numSamples] = size(phocs);
-dimFeats = size(feats,1);
+dimFeats = size(features,1);
 
-% Output encoded
-attFeatsTr = single(zeros(numAtt,numSamples));
-att_models = struct('W',[],'B',[],'numPosSamples',[]);
-
-% For each attribute
-parfor idxAtt = 1:numAtt
-    [model, encodedTr] = learn_att(idxAtt,feats, phocs,dimFeats, numSamples, opts, params);
-    att_models(idxAtt) = model;
-    attFeatsTr(idxAtt,:) = encodedTr;
+for idxAtt = sp:ep
+    [model, encodedTr] = learn_att(idxAtt,features, phocs,dimFeats, numSamples, opts, params);
 end
 end
 

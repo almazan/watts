@@ -6,6 +6,9 @@
 opts = prepare_opts();
 data = load_dataset(opts);
 
+%% Prepare images
+prepare_images(opts,data);
+
 %% Embed text labels with PHOC
 data.phocs = embed_labels_PHOC(opts,data);
 

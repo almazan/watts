@@ -1,4 +1,4 @@
-function [ count ] = writeMat_single(f, mat)
+function [ count ] = writeMat(mat,f)
 [D,N] = size(mat);
 fid = fopen(f, 'w');
 fwrite(fid, N, 'int32');

@@ -1,20 +1,21 @@
-function data = load_ICDAR11(opts)
-disp('* Reading ICDAR11 info *');
+function data = load_LP(opts)
+disp('* Reading LP info *');
 
 load([opts.pathDataset 'traindata.mat']);
 load([opts.pathDataset 'testdata.mat']);
 
 i=1;
+images = {};
 data = traindata;
 for j=1:length(data)
     words(i).pathIm = [opts.pathDataset data(j).ImgName];
     im = imread(words(i).pathIm);
     if ndims(im)>2
         im = rgb2gray(im);
-    end
-    [words(i).H,words(i).W,numC] = size(im);
+    end    
+    [words(i).H,words(i).W] = size(im);
     words(i).loc = [1 words(i).W 1 words(i).H];
-    words(i).gttext = data(j).GroundTruth;
+    words(i).gttext = data(j).GroundTruth;    
     i = i+1;
 end
 
@@ -25,9 +26,9 @@ for j=1:length(data)
     if ndims(im)>2
         im = rgb2gray(im);
     end
-    [words(i).H,words(i).W,numC] = size(im);
+    [words(i).H,words(i).W] = size(im);
     words(i).loc = [1 words(i).W 1 words(i).H];
-    words(i).gttext = data(j).GroundTruth;
+    words(i).gttext = data(j).GroundTruth;    
     i = i+1;
 end
 
@@ -53,12 +54,6 @@ for i=1:length(words)
     end
     idxClasses{class} = [idxClasses{class} i];
     words(i).class = class;
-end
-
-for i=1:length(words)
-    idx = randperm(length(names),1000);
-    words(i).sLexi = [words(i).gttext names(idx(1:50))];
-    words(i).mLexi = [words(i).gttext names(idx)];
 end
 
 %% Output
