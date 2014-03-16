@@ -5,18 +5,13 @@ addpath('util/');
 if ~exist('util/bin','dir')
     mkdir('util/bin');
 end
-addpath('util/bin');
-if ~exist('util/io','dir')
-    mkdir('util/io');
-end
-addpath('util/io');
-if ~exist('calib_c')
+if ~exist('calib_c','file')
     mex -o util/bin/calib_c -O -largeArrayDims util/calib_c.c
 end
-if ~exist('computeStats_c')
+if ~exist('computeStats_c','file')
     mex -o util/bin/computeStats_c -O -largeArrayDims  CFLAGS="\$CFLAGS -std=c99" util/computeStats_c.c
 end
-if ~exist('phoc_mex')
+if ~exist('phoc_mex','file')
     mex -o util/bin/phoc_mex -O -largeArrayDims util/phoc_mex.cpp
 end
 if ~exist('util/vlfeat-0.9.18/toolbox/mex','dir')
@@ -35,6 +30,8 @@ if ~exist('util/vlfeat-0.9.18/toolbox/mex','dir')
         run('util/vlfeat-0.9.18/toolbox/vl_compile');
     end
 end
+addpath('util/bin');
+addpath('util/io');
 
 
 run('util/vlfeat-0.9.18/toolbox/vl_setup')
@@ -45,7 +42,7 @@ rng('default');
 % Select the dataset
 opts.dataset = 'SVT';
 
-opts.path_datasets = '/local/agordo/watts/datasets';
+opts.path_datasets = 'datasets';
 opts.pathDataset = sprintf('%s/%s/',opts.path_datasets,opts.dataset);
 opts.pathImages = sprintf('%s/%s/images/',opts.path_datasets,opts.dataset);
 opts.pathDocuments = sprintf('%s/%s/documents/',opts.path_datasets,opts.dataset);
@@ -175,7 +172,7 @@ opts.tagPHOC = sprintf('_PHOCs%s%s%s',tagLevels,tagLevelsB,tagNumB);
 opts.tagFeatures = sprintf('%s%s%s%s',tagFeats,tagPCA,tagGMM,tagFold);
 
 % Paths and files
-opts.pathData = '/local/agordo/watts/data';
+opts.pathData = '~/watts/data';
 opts.pathFiles = sprintf('%s/files',opts.pathData);
 if ~exist(opts.pathData,'dir')
     mkdir(opts.pathData);
