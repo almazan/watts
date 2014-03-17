@@ -21,9 +21,9 @@ end
 % Embed the test representations
 matx = emb.rndmatx(1:emb.M,:);
 maty = emb.rndmaty(1:emb.M,:);
-tmp = matx*DATA.attReprTe;
+tmp = matx*data.attReprTe;
 attReprTe_emb = 1/sqrt(emb.M) * [ cos(tmp); sin(tmp)];
-tmp = maty*DATA.phocsTe;
+tmp = maty*data.phocsTe;
 phocsTe_emb = 1/sqrt(emb.M) * [ cos(tmp); sin(tmp)];
 attReprTe_emb=bsxfun(@minus, attReprTe_emb, emb.matts);
 phocsTe_emb=bsxfun(@minus, phocsTe_emb, emb.mphocs);
@@ -44,19 +44,13 @@ phocs_cca(isnan(phocs_cca)) = 0;
 words = lexicon.words;
 
 if strcmpi(opts.dataset,'IAM')
-    [cer, p1, qidx] = compute_cer(attReprTe_emb,phocsTe_emb,data.wordClsTe,data.labelsTe);
+    [cer, p1, qidx] = compute_cer(attReprTe_emb,phocs_cca,data.wordClsTe, data.labelsTe');        
+    linesTe = {data.wordsTe.lineId}';
+    linesTe = linesTe(qidx);
+    wer = compute_wer(linesTe,p1);
+    disp(cer);
+    disp(wer);
     
-    % opts.swFile = 'swIAM_trash.txt'; This file only contained '-'
-    labelsTe = data.labelsTe;
-    linesTe = data.linesTe; % From {data.words(:).lineId}
-    idx = ~ismember(labelsTe,'-');
-    opts.RemoveStopWords = 0;
-    [p1,~,~] = eval_dp_asymm(opts,attReprTe_emb,phocsTe_emb,data.wordClsTe,data.labelsTe); %Shouldn't it ends with 1 ???
-    % save('albert_p1_and_lines.mat','linesTe','p1','wordsTe','idx');
-    % ComputeWer('albert_p1_and_lines.mat');
-    
-    %     wer = compute_wer(attReprTe_emb, phocsTe_emb,data.wordClsTe,data.labelsTe);
-    wer = compute_wer(linesTe,p1,labelsTe,idx);
     
 else
     N = size(attReprTe_emb,2);

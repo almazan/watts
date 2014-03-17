@@ -1,10 +1,7 @@
-function [ wer ] = compute_wer(linesTe,p1,labelsTe,idx)
+function [ wer ] = compute_wer(linesTe ,p1)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
-% Discard ungoody words
-linesTe = linesTe(idx);
-p1 = p1(idx);
 
 % Create dictionary
 dict =java.util.Hashtable;
@@ -21,6 +18,6 @@ for i=1:length(entries)
     idxL = entries(i).getValue;
     wer(i) = mean(p1(idxL));
 end
-wer = 1-mean(wer);
+wer = 100*(1-mean(wer));
 end
 

@@ -12,9 +12,8 @@ if ~exist(opts.fileData, 'file')
     elseif strcmpi(opts.dataset,'ICDAR11')
         error('Not working');
         [data,images] = load_ICDAR11(opts);
-    elseif strcmpi(opts.dataset,'GW')
-        error('Not working');
-        [data,images] = load_GW(opts);
+    elseif strcmpi(opts.dataset,'GW')        
+        data = load_GW(opts);
     elseif strcmpi(opts.dataset,'ESP')
         error('Not working');
         [data,images] = load_ESP(opts);    

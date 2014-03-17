@@ -1,4 +1,13 @@
-function [cer, p1, qidx] = compute_cer(queries, dataset, allClasses, queriesWords)
+function [cer, p1, qidx] = compute_cer(queries, dataset, queriesClasses, queriesWords)
+
+[allWords,uidx,unused] = unique(queriesWords);
+allClasses = queriesClasses(uidx);
+% Remove those marked as 'trash'
+keepClasses = find(~ismember(allWords, '-'));
+allClasses = allClasses(keepClasses);
+allWords = allWords(keepClasses);
+dataset = dataset(:,keepClasses);
+
 
 % Get size and prepare stuff
 [d,N] = size(queries);
@@ -7,7 +16,7 @@ dataset = single(dataset');
 
 %For each element, find the number of relevants
 H = hist(single(allClasses), single(1:max(max(allClasses))));
-nRel = H(allClasses)';
+nRel = H(queriesClasses)';
 
 % Remove as queries those marked as 'trash'
 keepQueries = find(~ismember(queriesWords, '-'));
@@ -19,7 +28,7 @@ N = size(queries,1);
 % Compute scores
 S=queries*dataset';
 
-queriesClases = allClasses(keepQueries);
+queriesClases = queriesClasses(keepQueries);
 
 % Compute the number of relevants for each query:
 NRelevantsPerQuery = H(queriesClases)';
@@ -33,8 +42,10 @@ idxs = int32(-ones(size(keepQueries, 1),1));
 qidx=keepQueries;
 
 L=single(zeros(1,length(qidx)));
-for i=1:length(qidx)    
-    L(i) = levenshtein_c(queriesWords{qidx(i)},queriesWords{bestIdx(i)});
+% Levenshtein only needed for the words that failed
+badIdx = find(p1==0);
+for i=badIdx'    
+    L(i) = levenshtein_c(queriesWords{qidx(i)},allWords{bestIdx(i)});
 end
 cer = 100*mean(L);
                

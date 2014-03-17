@@ -13,6 +13,8 @@ elseif strcmpi(opts.dataset,'SVT')
     words = unique(words);
 elseif strcmpi(opts.dataset, 'LP')
     words = unique({words.gttext})';
+elseif strcmpi(opts.dataset, 'IAM')
+    words = unique({words.gttext})';
 end
 
 % Extracts the PHOC embedding for every word in the lexicon
