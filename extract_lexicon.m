@@ -25,6 +25,7 @@ elseif strcmpi(opts.dataset, 'LP')
 elseif strcmpi(opts.dataset, 'IAM')
     wordsTe = data.wordsTe;
     words = unique({wordsTe.gttext})';
+    words(ismember(words, '-')) = [];
 elseif strcmpi(opts.dataset, 'GW')
     wordsTe = data.words;
     words = unique({wordsTe.gttext})';

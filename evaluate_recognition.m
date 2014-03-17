@@ -43,9 +43,9 @@ phocs_cca = (bsxfun(@rdivide, phocs_cca, sqrt(sum(phocs_cca.*phocs_cca))));
 phocs_cca(isnan(phocs_cca)) = 0;
 
 words = lexicon.words;
-class_words = lexicon.class_words;
 
-[recognition.cer, p1, qidx] = compute_cer(attReprTe_emb,[data.wordsTe.class],{data.wordsTe.gttext},phocs_cca,class_words,words);
+[recognition.cer, p1, qidx] = compute_cer(attReprTe_emb,[data.wordsTe.class],{data.wordsTe.gttext},...
+    phocs_cca,lexicon.class_words,words);
 
 % [cer, p1, qidx] = compute_cer(attReprTe_emb,phocsTe_emb,data.wordClsTe,data.labelsTe');
 disp('------------------------------------');
