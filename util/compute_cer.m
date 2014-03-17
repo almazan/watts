@@ -2,6 +2,7 @@ function [cer, p1, qidx] = compute_cer(queries, dataset, queriesClasses, queries
 
 [allWords,uidx,unused] = unique(queriesWords);
 allClasses = queriesClasses(uidx);
+dataset = dataset(:,uidx);
 % Remove those marked as 'trash'
 keepClasses = find(~ismember(allWords, '-'));
 allClasses = allClasses(keepClasses);

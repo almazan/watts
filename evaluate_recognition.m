@@ -44,7 +44,7 @@ phocs_cca(isnan(phocs_cca)) = 0;
 words = lexicon.words;
 
 if strcmpi(opts.dataset,'IAM')
-    [cer, p1, qidx] = compute_cer(attReprTe_emb,phocs_cca,data.wordClsTe, data.labelsTe');        
+    [cer, p1, qidx] = compute_cer(attReprTe_emb,phocsTe_emb,data.wordClsTe, data.labelsTe');        
     linesTe = {data.wordsTe.lineId}';
     linesTe = linesTe(qidx);
     wer = compute_wer(linesTe,p1);
