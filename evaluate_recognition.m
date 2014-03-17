@@ -44,7 +44,20 @@ phocs_cca(isnan(phocs_cca)) = 0;
 words = lexicon.words;
 
 if strcmpi(opts.dataset,'IAM')
-    [cer, p1, qidx] = compute_cer(attReprTe_emb, phocsTe_emb,data.wordClsTe,data.labelsTe);
+    [cer, p1, qidx] = compute_cer(attReprTe_emb,phocsTe_emb,data.wordClsTe,data.labelsTe);
+    
+    % opts.swFile = 'swIAM_trash.txt'; This file only contained '-'
+    labelsTe = data.labelsTe;
+    linesTe = data.linesTe; % From {data.words(:).lineId}
+    idx = ~ismember(labelsTe,'-');
+    opts.RemoveStopWords = 0;
+    [p1,~,~] = eval_dp_asymm(opts,attReprTe_emb,phocsTe_emb,data.wordClsTe,data.labelsTe); %Shouldn't it ends with 1 ???
+    % save('albert_p1_and_lines.mat','linesTe','p1','wordsTe','idx');
+    % ComputeWer('albert_p1_and_lines.mat');
+    
+    %     wer = compute_wer(attReprTe_emb, phocsTe_emb,data.wordClsTe,data.labelsTe);
+    wer = compute_wer(linesTe,p1,labelsTe,idx);
+    
 else
     N = size(attReprTe_emb,2);
     p1small = zeros(N,1);

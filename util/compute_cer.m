@@ -11,9 +11,6 @@ nRel = H(allClasses)';
 
 % Remove as queries those marked as 'trash'
 keepQueries = find(~ismember(queriesWords, '-'));
-% Keep as queries only words that appear at least 1 more time
-% besides being the query. If necessary, remove stopwords)
-% keepQueries = intersect(keepQueries, find(nRel >=1));
 
 % Get updated queries
 queries = queries(keepQueries,:);

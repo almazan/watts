@@ -1,8 +1,6 @@
-function [ wer ] = compute_wer( matfile )
+function [ wer ] = compute_wer(linesTe,p1,labelsTe,idx)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
-
-load(matfile)
 
 % Discard ungoody words
 linesTe = linesTe(idx);
