@@ -43,7 +43,7 @@ run('util/vlfeat-0.9.18/toolbox/vl_setup')
 rng('default');
 
 % Select the dataset
-opts.dataset = 'SVT';
+opts.dataset = 'IIIT5K';
 
 opts.path_datasets = 'datasets';
 opts.pathDataset = sprintf('%s/%s/',opts.path_datasets,opts.dataset);
@@ -118,12 +118,12 @@ opts.evalRecog = 1;
 % Specific dataset options
 if strcmp(opts.dataset,'GW')
     opts.fold = 1;
-    opts.evalRecog = 0;
+    opts.minH = 80;
+    opts.maxH = 80;
 elseif strcmp(opts.dataset,'IAM')
     opts.PCADIM = 30;
     opts.RemoveStopWords = 1;
     opts.swFile = 'data/swIAM.txt';
-    opts.evalRecog = 0;
     opts.minH = 80;
     opts.maxH = 80;
 elseif strcmp(opts.dataset,'IIIT5K')
