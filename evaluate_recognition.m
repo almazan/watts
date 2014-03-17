@@ -18,13 +18,19 @@ end
 
 %lexicon.phocs = [lexicon.phocs;encodeWordsLength(lexicon.words,10)];
 
-% Embed the test attributes representation (attRepreTe_emb)
+% Embed the test representations
 matx = emb.rndmatx(1:emb.M,:);
-tmp = matx*data.attReprTe;
+maty = emb.rndmaty(1:emb.M,:);
+tmp = matx*DATA.attReprTe;
 attReprTe_emb = 1/sqrt(emb.M) * [ cos(tmp); sin(tmp)];
-attReprTe_emb = bsxfun(@minus, attReprTe_emb, emb.matts);
+tmp = maty*DATA.phocsTe;
+phocsTe_emb = 1/sqrt(emb.M) * [ cos(tmp); sin(tmp)];
+attReprTe_emb=bsxfun(@minus, attReprTe_emb, emb.matts);
+phocsTe_emb=bsxfun(@minus, phocsTe_emb, emb.mphocs);
 attReprTe_emb = emb.Wx(:,1:emb.K)' * attReprTe_emb;
+phocsTe_emb = emb.Wy(:,1:emb.K)' * phocsTe_emb;
 attReprTe_emb = (bsxfun(@rdivide, attReprTe_emb, sqrt(sum(attReprTe_emb.*attReprTe_emb))));
+phocsTe_emb = (bsxfun(@rdivide, phocsTe_emb, sqrt(sum(phocsTe_emb.*phocsTe_emb))));
 
 % Embed the dictionary
 phocs = single(lexicon.phocs);
@@ -37,67 +43,83 @@ phocs_cca = (bsxfun(@rdivide, phocs_cca, sqrt(sum(phocs_cca.*phocs_cca))));
 phocs_cca(isnan(phocs_cca)) = 0;
 words = lexicon.words;
 
-N = size(attReprTe_emb,2);
-p1small = zeros(N,1);
-p1medium = zeros(N,1);
-p1large = zeros(N,1);
-for i=1:N
-    feat = attReprTe_emb(:,i);
-    gt = data.wordsTe(i).gttext;
-    if ~strcmpi(opts.dataset, 'LP')
-        smallLexicon = unique(data.wordsTe(i).sLexi);
-        [~,~,ind] = inters(smallLexicon,words,'stable');
-        scores = feat'*phocs_cca(:,ind);
+if strcmpi(opts.dataset,'IAM')
+    [cer, p1, qidx] = compute_cer(attReprTe_emb,phocsTe_emb,data.wordClsTe,data.labelsTe);
+    
+    % opts.swFile = 'swIAM_trash.txt'; This file only contained '-'
+    labelsTe = data.labelsTe;
+    linesTe = data.linesTe; % From {data.words(:).lineId}
+    idx = ~ismember(labelsTe,'-');
+    opts.RemoveStopWords = 0;
+    [p1,~,~] = eval_dp_asymm(opts,attReprTe_emb,phocsTe_emb,data.wordClsTe,data.labelsTe); %Shouldn't it ends with 1 ???
+    % save('albert_p1_and_lines.mat','linesTe','p1','wordsTe','idx');
+    % ComputeWer('albert_p1_and_lines.mat');
+    
+    %     wer = compute_wer(attReprTe_emb, phocsTe_emb,data.wordClsTe,data.labelsTe);
+    wer = compute_wer(linesTe,p1,labelsTe,idx);
+    
+else
+    N = size(attReprTe_emb,2);
+    p1small = zeros(N,1);
+    p1medium = zeros(N,1);
+    p1large = zeros(N,1);
+    for i=1:N
+        feat = attReprTe_emb(:,i);
+        gt = data.wordsTe(i).gttext;
+        if ~strcmpi(opts.dataset, 'LP')
+            smallLexicon = unique(data.wordsTe(i).sLexi);
+            [~,~,ind] = inters(smallLexicon,words,'stable');
+            scores = feat'*phocs_cca(:,ind);
+            randInd = randperm(length(scores));
+            scores = scores(randInd);
+            [scores,I] = sort(scores,'descend');
+            I = randInd(I);
+            
+            if strcmpi(gt,smallLexicon{I(1)})
+                p1small(i) = 1;
+            else
+                p1small(i) = 0;
+            end
+        end
+        if strcmpi(opts.dataset,'IIIT5K')
+            mediumLexicon = unique(data.wordsTe(i).mLexi);
+            [~,~,ind] = inters(mediumLexicon,words,'stable');
+            scores = feat'*phocs_cca(:,ind);
+            randInd = randperm(length(scores));
+            scores = scores(randInd);
+            [scores,I] = sort(scores,'descend');
+            I = randInd(I);
+            if strcmpi(gt,mediumLexicon(I(1)))
+                p1medium(i) = 1;
+            else
+                p1medium(i) = 0;
+            end
+        end
+        
+        scores = feat'*phocs_cca;
         randInd = randperm(length(scores));
         scores = scores(randInd);
         [scores,I] = sort(scores,'descend');
         I = randInd(I);
         
-        if strcmpi(gt,smallLexicon{I(1)})
-            p1small(i) = 1;
+        if strcmpi(gt,words{I(1)})
+            p1large(i) = 1;
         else
-            p1small(i) = 0;
+            p1large(i) = 0;
         end
+        
     end
+    disp('------------------------------------');
+    recognition.small = 100*mean(p1small);
+    fprintf('lexicon small --   p@1: %.2f\n', recognition.small);
     if strcmpi(opts.dataset,'IIIT5K')
-        mediumLexicon = unique(data.wordsTe(i).mLexi);
-        [~,~,ind] = inters(mediumLexicon,words,'stable');
-        scores = feat'*phocs_cca(:,ind);
-        randInd = randperm(length(scores));
-        scores = scores(randInd);
-        [scores,I] = sort(scores,'descend');
-        I = randInd(I);
-        if strcmpi(gt,mediumLexicon(I(1)))
-            p1medium(i) = 1;
-        else
-            p1medium(i) = 0;
-        end
+        recognition.medium = 100*mean(p1medium);
+        fprintf('lexicon medium --   p@1: %.2f\n', recognition.medium);
     end
-    
-    scores = feat'*phocs_cca;
-    randInd = randperm(length(scores));
-    scores = scores(randInd);
-    [scores,I] = sort(scores,'descend');
-    I = randInd(I);
-    
-    if strcmpi(gt,words{I(1)})
-        p1large(i) = 1;
-    else
-        p1large(i) = 0;
-    end
-    
+    recognition.large = 100*mean(p1large);
+    fprintf('lexicon large --   p@1: %.2f\n', recognition.large);
+    disp('------------------------------------');
 end
-disp('------------------------------------');
-recognition.small = 100*mean(p1small);
-fprintf('lexicon small --   p@1: %.2f\n', recognition.small);
-if strcmpi(opts.dataset,'IIIT5K')
-    recognition.medium = 100*mean(p1medium);
-    fprintf('lexicon medium --   p@1: %.2f\n', recognition.medium);
-end
-recognition.large = 100*mean(p1large);
-fprintf('lexicon large --   p@1: %.2f\n', recognition.large);
-disp('------------------------------------');
-
 end
 
 % Ugly hack to deal with the lack of stable intersection in old versions of

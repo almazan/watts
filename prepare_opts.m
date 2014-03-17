@@ -14,6 +14,9 @@ end
 if ~exist('phoc_mex','file')
     mex -o util/bin/phoc_mex -O -largeArrayDims util/phoc_mex.cpp
 end
+if ~exist('levenshtein_c','file')
+    mex -o util/bin/levenshtein_c -O -largeArrayDims util/levenshtein_c.c
+end
 if ~exist('util/vlfeat-0.9.18/toolbox/mex','dir')
     if isunix
         cd 'util/vlfeat-0.9.18/';
