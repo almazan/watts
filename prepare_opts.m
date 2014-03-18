@@ -1,5 +1,13 @@
 function opts = prepare_opts()
 
+% Adjustable paths
+% Select the disk location of your datasets
+opts.path_datasets = 'datasets';
+% Path where the generated files will be saved
+opts.pathData = '~/watts/data';
+% Select the dataset
+opts.dataset = 'GW';
+
 % Adding all the necessary libraries and paths
 addpath('util/');
 if ~exist('util/bin','dir')
@@ -42,10 +50,6 @@ run('util/vlfeat-0.9.18/toolbox/vl_setup')
 % Set random seed to default
 rng('default');
 
-% Select the dataset
-opts.dataset = 'GW';
-
-opts.path_datasets = 'datasets';
 opts.pathDataset = sprintf('%s/%s/',opts.path_datasets,opts.dataset);
 opts.pathImages = sprintf('%s/%s/images/',opts.path_datasets,opts.dataset);
 opts.pathDocuments = sprintf('%s/%s/documents/',opts.path_datasets,opts.dataset);
@@ -176,7 +180,6 @@ opts.tagPHOC = sprintf('_PHOCs%s%s%s',tagLevels,tagLevelsB,tagNumB);
 opts.tagFeatures = sprintf('%s%s%s%s',tagFeats,tagPCA,tagGMM,tagFold);
 
 % Paths and files
-opts.pathData = '~/watts/data';
 opts.pathFiles = sprintf('%s/files',opts.pathData);
 if ~exist(opts.pathData,'dir')
     mkdir(opts.pathData);
