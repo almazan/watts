@@ -43,7 +43,7 @@ run('util/vlfeat-0.9.18/toolbox/vl_setup')
 rng('default');
 
 % Select the dataset
-opts.dataset = 'IIIT5K';
+opts.dataset = 'GW';
 
 opts.path_datasets = 'datasets';
 opts.pathDataset = sprintf('%s/%s/',opts.path_datasets,opts.dataset);

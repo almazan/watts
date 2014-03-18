@@ -64,10 +64,9 @@ end
 
 % Ugly hack to deal with the lack of stable intersection in old versions of
 % matlab
-function [empty1, empty2, ind] = stableintersection(a, b, varargin)
+function [empty1, ia, ib] = stableintersection(a, b, varargin)
 empty1=0;
-empty2=0;
 [~,ia,ib] = intersect(a,b);
-[~, tmp2] = sort(ia);
-ind = ib(tmp2);
+[ia, tmp2] = sort(ia);
+ib = ib(tmp2);
 end
