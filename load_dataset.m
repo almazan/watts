@@ -17,6 +17,8 @@ if ~exist(opts.fileData, 'file')
         data = load_ESP(opts);    
     elseif strcmpi(opts.dataset,'LP')        
         data = load_LP(opts);
+    else
+        error('Dataset not supported');
     end
     save(opts.fileData,'data');
 else

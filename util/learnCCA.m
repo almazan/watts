@@ -4,7 +4,7 @@ function [embedding,mAP] = learnCCA(opts,DATA)
 %% Part 1: Crosvalidate to find the best parameters in the config range
 fprintf('\n');
 disp('**************************************');
-disp('*************   CV CCA   *************');
+disp('*************   CV CSR   *************');
 disp('**************************************');
 
 % A) L2 normalize and mean center. Not critical, but helps a bit.

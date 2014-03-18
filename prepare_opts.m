@@ -1,5 +1,13 @@
 function opts = prepare_opts()
 
+% Adjustable paths
+% Select the disk location of your datasets
+opts.path_datasets = 'datasets';
+% Path where the generated files will be saved
+opts.pathData = '~/watts/data';
+% Select the dataset
+opts.dataset = 'GW';
+
 % Adding all the necessary libraries and paths
 addpath('util/');
 if ~exist('util/bin','dir')
@@ -13,6 +21,9 @@ if ~exist('computeStats_c','file')
 end
 if ~exist('phoc_mex','file')
     mex -o util/bin/phoc_mex -O -largeArrayDims util/phoc_mex.cpp
+end
+if ~exist('levenshtein_c','file')
+    mex -o util/bin/levenshtein_c -O -largeArrayDims util/levenshtein_c.c
 end
 if ~exist('util/vlfeat-0.9.18/toolbox/mex','dir')
     if isunix
@@ -39,10 +50,6 @@ run('util/vlfeat-0.9.18/toolbox/vl_setup')
 % Set random seed to default
 rng('default');
 
-% Select the dataset
-opts.dataset = 'SVT';
-
-opts.path_datasets = 'datasets';
 opts.pathDataset = sprintf('%s/%s/',opts.path_datasets,opts.dataset);
 opts.pathImages = sprintf('%s/%s/images/',opts.path_datasets,opts.dataset);
 opts.pathDocuments = sprintf('%s/%s/documents/',opts.path_datasets,opts.dataset);
@@ -111,16 +118,17 @@ opts.KCCA.Reg = [1e-5];
 opts.KCCA.verbose = 1;
 
 opts.evalRecog = 1;
+opts.TestHybrid = 1;
 
 % Specific dataset options
 if strcmp(opts.dataset,'GW')
     opts.fold = 1;
-    opts.evalRecog = 0;
+    opts.minH = 80;
+    opts.maxH = 80;
 elseif strcmp(opts.dataset,'IAM')
     opts.PCADIM = 30;
     opts.RemoveStopWords = 1;
     opts.swFile = 'data/swIAM.txt';
-    opts.evalRecog = 0;
     opts.minH = 80;
     opts.maxH = 80;
 elseif strcmp(opts.dataset,'IIIT5K')
@@ -143,7 +151,7 @@ end
 
 opts.FVdim = (opts.PCADIM+2)*opts.numSpatialX*opts.numSpatialY*opts.G*2;
 
-if opts.evalRecog
+if opts.evalRecog || opts.TestHybrid
     opts.TestKCCA = 1;
 end
 
@@ -172,7 +180,6 @@ opts.tagPHOC = sprintf('_PHOCs%s%s%s',tagLevels,tagLevelsB,tagNumB);
 opts.tagFeatures = sprintf('%s%s%s%s',tagFeats,tagPCA,tagGMM,tagFold);
 
 % Paths and files
-opts.pathData = '~/watts/data';
 opts.pathFiles = sprintf('%s/files',opts.pathData);
 if ~exist(opts.pathData,'dir')
     mkdir(opts.pathData);

@@ -6,6 +6,7 @@ mAP.platts = [];
 mAP.reg = [];
 mAP.cca = [];
 mAP.kcca = [];
+mAP.hybrid = [];
 
 if opts.TestFV
     mAP.fv = evaluateFV(opts, data);
@@ -31,15 +32,8 @@ if opts.TestKCCA
     mAP.kcca = evaluateKCCA(opts, data, embedding.kcca);
 end
 
-% % Hybrid spotting not implemented yet
-% if opts.evalHybrid
-%     alpha = 0:0.1:1;
-%     hybrid_test_map = zeros(length(alpha),1);
-%     for i=1:length(alpha)
-%         attRepr_hybrid = attReprTe_cca*alpha(i) + phocsTe_cca*(1-alpha(i));
-%         [p1,mAPEucl,q] = eval_dp_asymm(opts,attRepr_hybrid, attReprTe_cca,DATA.queriesClassesTe,DATA.wordsTe);
-%         hybrid_test_map(i) = mean(mAPEucl);
-%     end
-% end
+if opts.TestHybrid
+    mAP.hybrid = evaluateHybrid(opts, data, embedding.kcca);
+end
 
 end
