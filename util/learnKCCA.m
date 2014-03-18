@@ -4,7 +4,7 @@ function  [embedding,mAP] = learnKCCA(opts,DATA)
 %% Part 1: Crosvalidate to find the best parameters in the config range
 fprintf('\n');
 disp('**************************************');
-disp('*************   CV KCCA   ************');
+disp('*************   CV KCSR   ************');
 disp('**************************************');
 
 

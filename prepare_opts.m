@@ -114,6 +114,7 @@ opts.KCCA.Reg = [1e-5];
 opts.KCCA.verbose = 1;
 
 opts.evalRecog = 1;
+opts.TestHybrid = 1;
 
 % Specific dataset options
 if strcmp(opts.dataset,'GW')
@@ -146,7 +147,7 @@ end
 
 opts.FVdim = (opts.PCADIM+2)*opts.numSpatialX*opts.numSpatialY*opts.G*2;
 
-if opts.evalRecog
+if opts.evalRecog || opts.TestHybrid
     opts.TestKCCA = 1;
 end
 
