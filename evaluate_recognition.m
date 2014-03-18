@@ -20,56 +20,50 @@ end
 
 % Embed the test representations
 matx = emb.rndmatx(1:emb.M,:);
-% maty = emb.rndmaty(1:emb.M,:);
 tmp = matx*data.attReprTe;
 attReprTe_emb = 1/sqrt(emb.M) * [ cos(tmp); sin(tmp)];
-% tmp = maty*data.phocsTe;
-% phocsTe_emb = 1/sqrt(emb.M) * [ cos(tmp); sin(tmp)];
 attReprTe_emb=bsxfun(@minus, attReprTe_emb, emb.matts);
-% phocsTe_emb=bsxfun(@minus, phocsTe_emb, emb.mphocs);
 attReprTe_emb = emb.Wx(:,1:emb.K)' * attReprTe_emb;
-% phocsTe_emb = emb.Wy(:,1:emb.K)' * phocsTe_emb;
 attReprTe_emb = (bsxfun(@rdivide, attReprTe_emb, sqrt(sum(attReprTe_emb.*attReprTe_emb))));
-% phocsTe_emb = (bsxfun(@rdivide, phocsTe_emb, sqrt(sum(phocsTe_emb.*phocsTe_emb))));
 
-% Embed the dictionary
-phocs = single(lexicon.phocs);
+% Embed the lexicon dictionary
+lexicon_phocs = single(lexicon.phocs);
 maty = emb.rndmaty(1:emb.M,:);
-tmp = maty*phocs;
-phocs_cca = 1/sqrt(emb.M) * [ cos(tmp); sin(tmp)];
-phocs_cca=bsxfun(@minus, phocs_cca, emb.mphocs);
-phocs_cca = emb.Wy(:,1:emb.K)' * phocs_cca;
-phocs_cca = (bsxfun(@rdivide, phocs_cca, sqrt(sum(phocs_cca.*phocs_cca))));
-phocs_cca(isnan(phocs_cca)) = 0;
-
+tmp = maty*lexicon_phocs;
+lexicon_phocs_emb = 1/sqrt(emb.M) * [ cos(tmp); sin(tmp)];
+lexicon_phocs_emb=bsxfun(@minus, lexicon_phocs_emb, emb.mphocs);
+lexicon_phocs_emb = emb.Wy(:,1:emb.K)' * lexicon_phocs_emb;
+lexicon_phocs_emb = (bsxfun(@rdivide, lexicon_phocs_emb, sqrt(sum(lexicon_phocs_emb.*lexicon_phocs_emb))));
+lexicon_phocs_emb(isnan(lexicon_phocs_emb)) = 0;
 words = lexicon.words;
 
-[recognition.cer, p1, qidx] = compute_cer(attReprTe_emb,[data.wordsTe.class],{data.wordsTe.gttext},...
-    phocs_cca,lexicon.class_words,words);
 
-% [cer, p1, qidx] = compute_cer(attReprTe_emb,phocsTe_emb,data.wordClsTe,data.labelsTe');
-disp('------------------------------------');
-fprintf('cer: %.2f\n',recognition.cer);
+% Get all the valid queries. For most datasets, that is all of them.
+qidx = find(~strcmp({data.wordsTe.gttext},'-'));
+N = length(qidx);
 
-if isfield(data.wordsTe,'lineId')
-    linesTe = {data.wordsTe.lineId}';
-    linesTe = linesTe(qidx);
-    recognition.wer = compute_wer(linesTe,p1);
-    fprintf('wer: %.2f\n',recognition.wer);
-end
-disp('------------------------------------');
-
-N = size(attReprTe_emb,2);
+% Get the scores: p1, cer, and wer
 p1small = zeros(N,1);
+cersmall = zeros(N,1);
+wersmall = zeros(N,1);
 p1medium = zeros(N,1);
-p1large = zeros(N,1);
+cermedium = zeros(N,1);
+wermedium = zeros(N,1);
+p1full = zeros(N,1);
+cerfull = zeros(N,1);
+werfull = zeros(N,1);
+
 for i=1:N
-    feat = attReprTe_emb(:,i);
-    gt = data.wordsTe(i).gttext;
+    % Get actual idx, feature vector, and gt transcription
+    pos = qidx(i);
+    feat = attReprTe_emb(:,pos);
+    gt = data.wordsTe(pos).gttext;
+    
+    % Small lexicon available
     if isfield(data.wordsTe,'sLexi')
         smallLexicon = unique(data.wordsTe(i).sLexi);
         [~,~,ind] = inters(smallLexicon,words,'stable');
-        scores = feat'*phocs_cca(:,ind);
+        scores = feat'*lexicon_phocs_emb(:,ind);
         randInd = randperm(length(scores));
         scores = scores(randInd);
         [scores,I] = sort(scores,'descend');
@@ -79,12 +73,15 @@ for i=1:N
             p1small(i) = 1;
         else
             p1small(i) = 0;
+            cersmall(i) = levenshtein_c(gt, smallLexicon{I(1)});
         end
     end
-    if strcmpi(opts.dataset,'IIIT5K')
-        mediumLexicon = unique(data.wordsTe(i).mLexi);
+    
+    % Medium lexicon available
+    if isfield(data.wordsTe,'mLexi')
+        mediumLexicon = unique(data.wordsTe(pos).mLexi);
         [~,~,ind] = inters(mediumLexicon,words,'stable');
-        scores = feat'*phocs_cca(:,ind);
+        scores = feat'*lexicon_phocs_emb(:,ind);
         randInd = randperm(length(scores));
         scores = scores(randInd);
         [scores,I] = sort(scores,'descend');
@@ -93,35 +90,79 @@ for i=1:N
             p1medium(i) = 1;
         else
             p1medium(i) = 0;
+            cermedium(i) = levenshtein_c(gt, mediumLexicon{I(1)});
         end
     end
     
-    scores = feat'*phocs_cca;
+    % Full lexicon always available
+    scores = feat'*lexicon_phocs_emb;
     randInd = randperm(length(scores));
     scores = scores(randInd);
     [scores,I] = sort(scores,'descend');
     I = randInd(I);
     
     if strcmpi(gt,words{I(1)})
-        p1large(i) = 1;
+        p1full(i) = 1;
     else
-        p1large(i) = 0;
-    end
-    
+        p1full(i) = 0;
+        cerfull(i) = levenshtein_c(gt, words{I(1)});        
+    end    
 end
+
+% Compute wer if there is line info available
+if isfield(data.wordsTe,'lineId')
+    linesTe = {data.wordsTe.lineId}';
+    linesTe = linesTe(qidx);
+    if isfield(data.wordsTe,'sLexi')
+        recognition.wersmall = compute_wer(linesTe,p1small);
+    end
+    if isfield(data.wordsTe,'mLexi')
+        recognition.wermedium = compute_wer(linesTe,p1medium);
+    end
+    recognition.werfull = compute_wer(linesTe,p1full);        
+end
+
+
+% Display stuff
+disp('');
+disp('**************************************');
+disp('************  Recognition  ***********');
+disp('**************************************');
 disp('------------------------------------');
 if isfield(data.wordsTe,'sLexi')
-    recognition.small = 100*mean(p1small);
-    fprintf('lexicon small --   p@1: %.2f\n', recognition.small);
+    recognition.p1small = 100*mean(p1small);
+    recognition.cersmall = 100*mean(cersmall);
+    if isfield(recognition,'wersmall')
+        fprintf('lexicon small  -- p@1: %.2f. cer: %.2f. wer: %.2f\n', recognition.p1small, recognition.cersmall, recognition.wersmall);
+    else
+        fprintf('lexicon small  -- p@1: %.2f. cer: %.2f. wer: N/A\n', recognition.p1small, recognition.cersmall);
+    end
 end
-if strcmpi(opts.dataset,'IIIT5K')
-    recognition.medium = 100*mean(p1medium);
-    fprintf('lexicon medium --   p@1: %.2f\n', recognition.medium);
+
+if isfield(data.wordsTe,'mLexi')
+    recognition.p1medium = 100*mean(p1medium);
+    recognition.cermedium = 100*mean(cermedium);
+    if isfield(recognition,'wermedium')
+        fprintf('lexicon medium -- p@1: %.2f. cer: %.2f. wer: %.2f\n', recognition.p1medium, recognition.cermedium, recognition.wermedium);
+    else
+        fprintf('lexicon medium -- p@1: %.2f. cer: %.2f. wer: N/A\n', recognition.p1medium, recognition.cermedium);
+    end
 end
-recognition.large = 100*mean(p1large);
-fprintf('lexicon large --   p@1: %.2f\n', recognition.large);
+
+recognition.p1full = 100*mean(p1full);
+recognition.cerfull = 100*mean(cerfull);
+if isfield(recognition,'werfull')
+    fprintf('lexicon full   -- p@1: %.2f. cer: %.2f. wer: %.2f\n', recognition.p1full, recognition.cerfull, recognition.werfull);
+else
+    fprintf('lexicon full   -- p@1: %.2f. cer: %.2f. wer: N/A\n', recognition.p1full, recognition.cerfull);
+end
 disp('------------------------------------');
 end
+
+
+
+
+
 
 % Ugly hack to deal with the lack of stable intersection in old versions of
 % matlab
