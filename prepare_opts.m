@@ -4,15 +4,17 @@ function opts = prepare_opts()
 % Select the disk location of your datasets
 opts.path_datasets = 'datasets';
 % Path where the generated files will be saved
-opts.pathData = '~/watts/data';
+opts.pathData = '~/Development/data/watts';
 % Select the dataset
-opts.dataset = 'GW';
+opts.dataset = 'IIIT5K';
 
 % Adding all the necessary libraries and paths
 addpath('util/');
 if ~exist('util/bin','dir')
     mkdir('util/bin');
 end
+addpath('util/bin');
+addpath('util/io');
 if ~exist('calib_c','file')
     mex -o util/bin/calib_c -O -largeArrayDims util/calib_c.c
 end
@@ -41,8 +43,6 @@ if ~exist('util/vlfeat-0.9.18/toolbox/mex','dir')
         run('util/vlfeat-0.9.18/toolbox/vl_compile');
     end
 end
-addpath('util/bin');
-addpath('util/io');
 
 
 run('util/vlfeat-0.9.18/toolbox/vl_setup')
