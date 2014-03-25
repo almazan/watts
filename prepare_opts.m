@@ -6,7 +6,7 @@ opts.path_datasets = 'datasets';
 % Path where the generated files will be saved
 opts.pathData = '~/Development/data/watts';
 % Select the dataset
-opts.dataset = 'IIIT5K';
+opts.dataset = 'GW';
 
 % Adding all the necessary libraries and paths
 addpath('util/');
