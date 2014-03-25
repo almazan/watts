@@ -47,4 +47,45 @@ disp('------------------------------------');
 
 mAP.qbe = 100*qbe_test_map;
 mAP.qbs = 100*qbs_test_map;
+
+
+%% Eval test vs train QBE
+if strcmpi(opts.dataset,'IIIT5K')
+    attReprTr = readMat(opts.fileAttRepresTr);
+    tmp = matx*attReprTr;
+    attReprTr_cca = 1/sqrt(embedding.M) * [ cos(tmp); sin(tmp)];
+    attReprTr_cca=bsxfun(@minus, attReprTr_cca, embedding.matts);
+    attReprTr_cca = embedding.Wx(:,1:embedding.K)' * attReprTr_cca;
+    attReprTr_cca = (bsxfun(@rdivide, attReprTr_cca, sqrt(sum(attReprTr_cca.*attReprTr_cca))));
+    
+    [p1,mAPEucl, q] = eval_dp_asymm_alt(attReprTe_cca,attReprTr_cca,DATA.wordClsTe,DATA.wordClsTr);
+    qbe_test_map = mean(mAPEucl);
+    qbe_test_p1 = mean(p1);
+    
+    fprintf('\n');
+    disp('------------------------------------');
+    fprintf('Test vs Train');
+    fprintf('qbe --   test: (map: %.2f. p@1: %.2f)\n',  100*qbe_test_map, 100*qbe_test_p1);
+    disp('------------------------------------');
+end
+
+%% Eval with words only appearing in training
+% QBS (note the 1 at the end)
+if strcmpi(opts.dataset,'GW')
+    idx = ismember(DATA.wordClsTe,DATA.wordClsTr);
+    phocsTe_cca = phocsTe_cca(:,idx);
+    queriesCls = DATA.wordClsTe(idx);
+    [p1,mAPEucl, q] = eval_dp_asymm_alt(phocsTe_cca,attReprTe_cca,queriesCls,DATA.wordClsTe,1);
+    qbs_test_map = mean(mAPEucl);
+    qbs_test_p1 = mean(p1);
+    
+    % Display info
+    disp('------------------------------------');
+    fprintf('Evaluation with queries that appear in training\n');
+    fprintf('qbs --   test: (map: %.2f. p@1: %.2f)\n',  100*qbs_test_map, 100*qbs_test_p1);
+    disp('------------------------------------');
+end
+
+%% Eval line spotting
+
 end
