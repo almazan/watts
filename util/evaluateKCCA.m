@@ -1,5 +1,11 @@
 function  mAP = evaluateKCCA(opts,DATA,embedding)
 % Evaluate KCCA.
+% Small fix for versions of matlab older than 2012b ('8') that do not support stable intersection
+if verLessThan('matlab', '8')
+    inters=@stableintersection;
+else
+    inters=@intersect;
+end
 
 fprintf('\n');
 disp('**************************************');
@@ -87,5 +93,47 @@ if strcmpi(opts.dataset,'GW')
 end
 
 %% Eval line spotting
+if strcmpi(opts.dataset,'IAM')
+    load('data/IAM_dict_line2classes.mat');
+    DATA.line2classes = line2classes;
+    
+    % Preparing queries for Volkmar's protocol
+    
+    words = [DATA.labelsTr DATA.labelsVa DATA.labelsTe];
+    phocs = [DATA.phocsTr DATA.phocsVa DATA.phocsTe];
+    wordCls = [DATA.wordClsTr DATA.wordClsVa DATA.wordClsTe];
+    [u,ind,n] = unique(lower(words(:)));
+    B = accumarray(n, 1, [], @sum);
+    [B,I] = sort(B,'descend');
+    words = u(I);
+    ind = ind(I);
+    [words,ia,ib] = inters(lower(words),lower([DATA.labelsTr DATA.labelsVa]),'stable');
+    words = words(1:4000);
+    ind = ind(ia);
+    ind = ind(1:4000);
+    phocs = phocs(:,ind);
+    wordCls = wordCls(ind);
+    tmp = maty*phocs;
+    phocs_cca = 1/sqrt(embedding.M) * [ cos(tmp); sin(tmp)];
+    phocs_cca=bsxfun(@minus, phocs_cca, mh);
+    phocs_cca = embedding.Wy(:,1:embedding.K)' * phocs_cca;
+    phocs_cca = (bsxfun(@rdivide, phocs_cca, sqrt(sum(phocs_cca.*phocs_cca))));
+    
+    linesV = textread('data/test-lines.IAMTest_Vol.uniq.txt','%s','delimiter',',');
+    idx = find(ismember(DATA.linesTe,linesV));
+    
+    mapLineSpotting = eval_line_spotting_Volkmar(opts, phocs_cca, attReprTe_cca(:,idx),wordCls,DATA.wordClsTe(idx),words,DATA.linesTe(idx),DATA.line2classes);
+    
+    mean(mapLineSpotting)
+end
 
+end
+
+% Ugly hack to deal with the lack of stable intersection in old versions of
+% matlab
+function [r, ia, ib] = stableintersection(a, b, varargin)
+[r,ia,ib] = intersect(a,b);
+[ia, tmp2] = sort(ia);
+ib = ib(tmp2);
+r = r(tmp2);
 end
