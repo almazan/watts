@@ -16,14 +16,14 @@
     <!-- HEADER -->
     <div id="header_wrap" class="outer">
         <header class="inner">
-          <a id="forkme_banner" href="https://github.com/almazan/words-att">View on GitHub</a>
+          <a id="forkme_banner" href="https://github.com/almazan/watts">View on GitHub</a>
 
           <h1 id="project_title">Word Representation with Embedded Attributes</h1>
           <h2 id="project_tagline">A library for word spotting and recognition</h2>
 
             <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/almazan/words-att/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/almazan/words-att/tarball/master">Download this project as a tar.gz file</a>
+              <a class="zip_download_link" href="https://github.com/almazan/watts/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/almazan/watts/tarball/master">Download this project as a tar.gz file</a>
             </section>
         </header>
     </div>
@@ -36,7 +36,7 @@
 <p>This code is written in Matlab and is the basis of the following project:</p>
 
 <h6>
-<a name="jon-almaz%C3%A1n-albert-gordo-alicia-forn%C3%A9s-ernest-valveny--word-spotting-and-recognition-with-embedded-attributes-project-page" class="anchor" href="#jon-almaz%C3%A1n-albert-gordo-alicia-forn%C3%A9s-ernest-valveny--word-spotting-and-recognition-with-embedded-attributes-project-page"><span class="octicon octicon-link"></span></a><a href="http://www.cvc.uab.es/%7Ealmazan">Jon Almazán</a>, Albert Gordo, Alicia Fornés, Ernest Valveny.  <em>Word Spotting and Recognition with Embedded Attributes</em>. <a href="http://www.cvc.uab.es/%7Ealmazan/index.php/projects/words-att/">Project Page</a>
+<a name="jon-almaz%C3%A1n-albert-gordo-alicia-forn%C3%A9s-ernest-valveny--word-spotting-and-recognition-with-embedded-attributes-iccv2013-project-page" class="anchor" href="#jon-almaz%C3%A1n-albert-gordo-alicia-forn%C3%A9s-ernest-valveny--word-spotting-and-recognition-with-embedded-attributes-iccv2013-project-page"><span class="octicon octicon-link"></span></a><a href="http://www.cvc.uab.es/%7Ealmazan">Jon Almazán</a>, Albert Gordo, Alicia Fornés, Ernest Valveny.  <em>Word Spotting and Recognition with Embedded Attributes</em>. ICCV2013. <a href="http://www.cvc.uab.es/%7Ealmazan/index.php/projects/words-att/">Project page</a>
 </h6>
 
 <p><img src="http://www.cvc.uab.es/%7Ealmazan/wp-content/uploads/2014/01/spaces_small.png" alt=""></p>
@@ -48,11 +48,9 @@
 
 <p>We propose to use character attributes to learn a semantic representation of the word images and then perform a calibration of the scores with CCA that puts images and text strings in a common subspace. After that, spotting and recognition become simple nearest neighbor problems in a very low dimensional space. We test our approach on four public datasets of both document and natural images showing results comparable or better than the state-of-the-art on spotting and recognition tasks.</p>
 
-<p>This word spotting library uses some great open-source software:</p>
+<p>This word spotting library uses great open-source software:</p>
 
 <ul>
-<li>
-<a href="https://gforge.inria.fr/projects/yael/">Yael library</a> </li>
 <li><a href="http://www.vlfeat.org">VLFeat</a></li>
 </ul><hr><h1>
 <a name="matlab-quick-start-guide" class="anchor" href="#matlab-quick-start-guide"><span class="octicon octicon-link"></span></a>MATLAB Quick Start Guide</h1>
@@ -63,13 +61,13 @@
 <a name="download-source-code" class="anchor" href="#download-source-code"><span class="octicon octicon-link"></span></a>Download source code</h2>
 
 <div class="highlight highlight-sh"><pre><span class="nv">$ </span><span class="nb">cd</span> ~/your_projects/
-<span class="nv">$ </span>git clone git://github.com/almazan/words-att.git
+<span class="nv">$ </span>git clone git://github.com/almazan/watts.git
 </pre></div>
 
 <h2>
 <a name="download-and-uncompress-the-iiit5k-dataset" class="anchor" href="#download-and-uncompress-the-iiit5k-dataset"><span class="octicon octicon-link"></span></a>Download and uncompress the IIIT5K dataset</h2>
 
-<div class="highlight highlight-sh"><pre><span class="nv">$ </span><span class="nb">cd </span>words-att/datasets
+<div class="highlight highlight-sh"><pre><span class="nv">$ </span><span class="nb">cd </span>watts/datasets
 <span class="nv">$ </span>wget http://cvit.iiit.ac.in/projects/SceneTextUnderstanding/IIIT5K-Word_V3.0.tar.gz
 <span class="nv">$ </span>tar -xvzf IIIT5K-Word_V3.0.tar.gz
 </pre></div>
@@ -77,7 +75,7 @@
 <h2>
 <a name="download-precomputed-models-for-iiit5k-optional" class="anchor" href="#download-precomputed-models-for-iiit5k-optional"><span class="octicon octicon-link"></span></a>Download precomputed models for IIIT5K (optional)</h2>
 
-<div class="highlight highlight-sh"><pre><span class="nv">$ </span><span class="nb">cd </span>words-att/data
+<div class="highlight highlight-sh"><pre><span class="nv">$ </span><span class="nb">cd </span>watts/data
 <span class="nv">$ </span>wget http://www.cvc.uab.es/~almazan/data/IIIT5K_models.tar.gz
 <span class="nv">$ </span>tar -xvzf IIIT5K_models.tar.gz
 </pre></div>
@@ -88,17 +86,17 @@
 <div class="highlight highlight-sh"><pre>&gt;&gt; main
 </pre></div>
 
-<p>Note: The default parameters as well as the dataset selection can be modified in the <em>prepare_opts.m</em> script.</p>
+<p>Note: The default parameters as well as the dataset selection and paths can be modified in the <em>prepare_opts.m</em> script.</p>
 
 <hr><h1>
 <a name="authors" class="anchor" href="#authors"><span class="octicon octicon-link"></span></a>Authors</h1>
 
-<p>The code has been developed by <a href="https://github.com/almazan" class="user-mention">@almazan</a> and <a href="https://github.com/agordo" class="user-mention">@agordo</a>.</p>
+<p>The code has been developed by <a href="https://github.com/almazan">@almazan</a> and <a href="https://github.com/agordo">@agordo</a>.</p>
 
 <h1>
 <a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h1>
 
-<p>This code has been released under a MIT license.</p>
+<p>This code has been released under the MIT license.</p>
       </section>
     </div>
 
