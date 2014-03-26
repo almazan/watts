@@ -97,8 +97,7 @@ if strcmpi(opts.dataset,'IAM')
     load('data/IAM_dict_line2classes.mat');
     DATA.line2classes = line2classes;
     
-    % Preparing queries for Volkmar's protocol
-    
+    % Preparing queries for protocol
     words = [DATA.labelsTr DATA.labelsVa DATA.labelsTe];
     phocs = [DATA.phocsTr DATA.phocsVa DATA.phocsTe];
     wordCls = [DATA.wordClsTr DATA.wordClsVa DATA.wordClsTe];
