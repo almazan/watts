@@ -97,8 +97,9 @@ if strcmpi(opts.dataset,'GW')
 end
 
 %% Eval line spotting
-if strcmpi(opts.dataset,'IAM')
+if   strcmpi(opts.dataset,'IAM')
     load('data/IAM_dict_line2classes.mat');
+    DATA.linesTe = {DATA.wordsTe.lineId};
     DATA.line2classes = line2classes;
     
     % Preparing queries for protocol
@@ -126,8 +127,7 @@ if strcmpi(opts.dataset,'IAM')
     idx = find(ismember(DATA.linesTe,linesV));
     
     mapLineSpotting = eval_line_spotting_Volkmar(opts, phocs_cca, attReprTe_cca(:,idx),wordCls,DATA.wordClsTe(idx),words,DATA.linesTe(idx),DATA.line2classes);
-    
-    mean(mapLineSpotting)
+    mAP.alt_volkmar.qbs = 100*mean(mapLineSpotting);    
 end
 
 end
