@@ -73,6 +73,8 @@ if strcmpi(opts.dataset,'IIIT5K')
     fprintf('Test vs Train');
     fprintf('qbe --   test: (map: %.2f. p@1: %.2f)\n',  100*qbe_test_map, 100*qbe_test_p1);
     disp('------------------------------------');
+    
+    mAP.alt_test_vs_train.qbe = 100*qbe_test_map;
 end
 
 %% Eval with words only appearing in training
@@ -90,6 +92,8 @@ if strcmpi(opts.dataset,'GW')
     fprintf('Evaluation with queries that appear in training\n');
     fprintf('qbs --   test: (map: %.2f. p@1: %.2f)\n',  100*qbs_test_map, 100*qbs_test_p1);
     disp('------------------------------------');
+    
+    mAP.alt_only_training_words.qbs = 100*qbs_test_map;
 end
 
 %% Eval line spotting
@@ -114,7 +118,7 @@ if strcmpi(opts.dataset,'IAM')
     wordCls = wordCls(ind);
     tmp = maty*phocs;
     phocs_cca = 1/sqrt(embedding.M) * [ cos(tmp); sin(tmp)];
-    phocs_cca=bsxfun(@minus, phocs_cca, mh);
+    phocs_cca=bsxfun(@minus, phocs_cca, embedding.mphocs);
     phocs_cca = embedding.Wy(:,1:embedding.K)' * phocs_cca;
     phocs_cca = (bsxfun(@rdivide, phocs_cca, sqrt(sum(phocs_cca.*phocs_cca))));
     

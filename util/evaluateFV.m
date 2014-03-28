@@ -19,6 +19,6 @@ fprintf('Dimensions: %d\n',size(feats_te,1));
 fprintf('qbe -- test: (map: %.2f. p@1: %.2f)\n',  100*qbe_map, 100*qbe_p1);
 disp('------------------------------------');
 
-mAP.qbe = qbe_map;
+mAP.qbe = 100*qbe_map;
 mAP.qbs = [];
 end
