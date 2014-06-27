@@ -16,7 +16,7 @@ We deal with the problems of word spotting and word recognition on images. In wo
 
 We propose to use character attributes to learn a semantic representation of the word images and then perform a calibration of the scores with CCA that puts images and text strings in a common subspace. After that, spotting and recognition become simple nearest neighbor problems in a very low dimensional space. We test our approach on four public datasets of both document and natural images showing results comparable or better than the state-of-the-art on spotting and recognition tasks.
 
-This word spotting library uses some great open-source software:
+This word spotting library uses great open-source software:
 
 * [VLFeat](http://www.vlfeat.org)
 
@@ -29,19 +29,19 @@ To get started, you need to install MATLAB and download the code from GitHub. Th
 ## Download source code
 ``` sh
 $ cd ~/your_projects/
-$ git clone git://github.com/almazan/words-att.git
+$ git clone git://github.com/almazan/watts.git
 ```
 
 ## Download and uncompress the IIIT5K dataset
 ``` sh
-$ cd words-att/datasets
+$ cd watts/datasets
 $ wget http://cvit.iiit.ac.in/projects/SceneTextUnderstanding/IIIT5K-Word_V3.0.tar.gz
 $ tar -xvzf IIIT5K-Word_V3.0.tar.gz
 ```
 
 ## Download precomputed models for IIIT5K (optional)
 ``` sh
-$ cd words-att/data
+$ cd watts/data
 $ wget http://www.cvc.uab.es/~almazan/data/IIIT5K_models.tar.gz
 $ tar -xvzf IIIT5K_models.tar.gz
 ```
@@ -52,13 +52,13 @@ $ tar -xvzf IIIT5K_models.tar.gz
 >> main
 ```
 
-Note: The default parameters as well as the dataset selection can be modified in the *prepare_opts.m* script.
+Note: The default parameters as well as the dataset selection and paths can be modified in the *prepare_opts.m* script.
 
 ----
 
 # Authors
 
-The code has been developed by @almazan and @agordo.
+The code has been developed by [@almazan](https://github.com/almazan) and [@agordo](https://github.com/agordo).
 
 # License
 
