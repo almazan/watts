@@ -13,7 +13,11 @@ if  ~exist(opts.filePHOCs,'file')
     W = arrayfun(lf, data.words,'UniformOutput', false);
         
     phocsuni = phoc_mex(W, voc, int32(opts.levels));
-    phocsbi = phoc_mex(W, opts.bgrams, int32(opts.levelsB));
+    if opts.numBigrams>0
+        phocsbi = phoc_mex(W, opts.bgrams, int32(opts.levelsB));
+    else
+        phocsbi = [];
+    end
     phocs = [phocsuni;phocsbi];   
     writeMat(single(phocs), opts.filePHOCs);    
 else

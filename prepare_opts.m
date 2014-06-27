@@ -6,7 +6,7 @@ opts.path_datasets = 'datasets';
 % Path where the generated files will be saved
 opts.pathData = '~/Development/data/watts';
 % Select the dataset
-opts.dataset = 'IIIT5K';
+opts.dataset = 'SVT';
 
 % Adding all the necessary libraries and paths
 addpath('util/');
@@ -105,15 +105,15 @@ opts.TestRegress = 0;
 opts.Reg.Reg = [1e-1,1e-2,1e-3,1e-4];
 opts.Reg.verbose = 1;
 
-opts.TestCCA = 0;
-opts.CCA.Dims = [96,128];
+opts.TestCCA = 1;
+opts.CCA.Dims = [80];
 opts.CCA.Reg = [1e-4,1e-5,1e-6];
 opts.CCA.verbose = 0;
 
 opts.TestKCCA = 1;
 opts.KCCA.M = [2500];
 opts.KCCA.G = [40];
-opts.KCCA.Dims = [128];
+opts.KCCA.Dims = [160];
 opts.KCCA.Reg = [1e-5];
 opts.KCCA.verbose = 1;
 
