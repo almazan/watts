@@ -3,7 +3,7 @@ function feats = extract_FV_features(opts,images,GMM,PCA)
 nWords = length(images);
 feats = zeros(opts.FVdim,nWords,'single');
 
-for i=1:length(images)
+parfor i=1:length(images)
     fprintf('Extracting FV representation from image %d\n',i);
     
     im = images{i};
