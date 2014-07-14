@@ -45,24 +45,23 @@ if ~exist('candidates','var')
     end
 end
 
-file = fullfile(pathData,sprintf('%s_attRepr.mat',dataset));
+file = fullfile(pathData,sprintf('%s_attRepr.bin',dataset));
 if ~exist(file,'file')
     ncandidates = length(candidates);
-    imagesPerBatch = 128;
+    imagesPerBatch = 1024;
     atts = zeros(embedding.K,ncandidates,'single');
     nbatches = ceil(ncandidates/imagesPerBatch);
-    idx = 1;
-    for i = 1:nbatches
+    for i = 184:nbatches
+        idx = 1 + (i-1)*imagesPerBatch;
         iniIdx = idx;
         endIdx = min(idx+imagesPerBatch-1,ncandidates);
         images = {candidates(iniIdx:endIdx).im};
         att = image2att(images,pathDataset,embeddingMethod);
         atts(:,iniIdx:endIdx) = att;
-        idx = idx+imagesPerBatch;
     end
-    
+    writeMat(atts,file);
 else
-    load(file)
+    atts = readMat(file);
 end
 
 locCand = [candidates(:).x1; candidates(:).x2; ...
@@ -80,6 +79,7 @@ path = 'qualres/';
 totalCand = 0;
 totalCorrect = 0;
 for i=1:length(test)
+    fprintf('Evaluating image %d\n',i);
     t = test(i);
     words = t.words;
     nw = length(words);
@@ -95,17 +95,21 @@ for i=1:length(test)
     end
     ph = phocs(:,idxl);
     nameDoc = t.name(5:9);
-    idDoc = docsId(nameDoc);
+    if docsDic.isKey(nameDoc)
+        idDoc = docsDic(nameDoc);
+    else
+        continue;
+    end
     idxc = find(ids==idDoc);
-    atts = attRepr(:,idxc);
+    attsTemp = atts(:,idxc);
     loc = locCand(idxc,:);
-    S = atts'*ph;
+    S = attsTemp'*ph;
     [s,I] = max(S,[],2);
     [s2,I2] = sort(s);
     %     idxs = s2>0.45;
     %     s2 = s2(idxs);
     %     I2 = I2(idxs);
-    pick = nms_C(int32(I2),int32(loc)',0.2);
+    pick = nms_C(int32(I2),int32(loc)',0.3);
     resL = I(pick);
     resC = idxc(pick);
     resS = s(pick);

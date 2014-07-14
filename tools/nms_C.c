@@ -89,7 +89,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
             pick[Npick++] = I[i];
             for (j=0; j < i; j++)
             {
-                if (!used[j] && (overlaps(i,j, I, X, cols, overlap)))// || overlaps(j,i, I, X, cols, overlap)))
+                if (!used[j] && (overlaps(i,j, I, X, cols, overlap)))
                 {
                     used[j]=1;
                 }
