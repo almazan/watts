@@ -6,7 +6,7 @@ opts.path_datasets = 'datasets';
 % Path where the generated files will be saved
 opts.pathData = '~/Development/data/watts';
 % Select the dataset
-opts.dataset = 'SVT';
+opts.dataset = 'ICDAR03';
 
 % Adding all the necessary libraries and paths
 addpath('util/');
@@ -140,6 +140,10 @@ elseif strcmp(opts.dataset,'SVT')
     opts.maxH = 80;
     opts.doMinibox = 0;
 elseif strcmp(opts.dataset,'ICDAR11')
+    opts.minH = 80;
+    opts.maxH = 80;
+    opts.doMinibox = 0;
+elseif strcmp(opts.dataset,'ICDAR03')
     opts.minH = 80;
     opts.maxH = 80;
     opts.doMinibox = 0;

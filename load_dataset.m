@@ -11,6 +11,8 @@ if ~exist(opts.fileData, 'file')
         data = load_SVT(opts);
     elseif strcmpi(opts.dataset,'ICDAR11')
         data = load_ICDAR11(opts);
+    elseif strcmpi(opts.dataset,'ICDAR03')
+        data = load_ICDAR03(opts);
     elseif strcmpi(opts.dataset,'GW')
         data = load_GW(opts);
     elseif strcmpi(opts.dataset,'ESP')
