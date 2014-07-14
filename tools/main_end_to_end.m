@@ -45,10 +45,10 @@ if ~exist('candidates','var')
     end
 end
 
-file = fullfile(pathData,sprintf('%s_attRepr.mat',dataset));
+file = fullfile(pathData,sprintf('%s_attRepr.bin',dataset));
 if ~exist(file,'file')
     ncandidates = length(candidates);
-    imagesPerBatch = 128;
+    imagesPerBatch = 1024;
     atts = zeros(embedding.K,ncandidates,'single');
     nbatches = ceil(ncandidates/imagesPerBatch);
     idx = 1;
@@ -60,9 +60,9 @@ if ~exist(file,'file')
         atts(:,iniIdx:endIdx) = att;
         idx = idx+imagesPerBatch;
     end
-    
+    writeMat(atts,file);
 else
-    load(file)
+    atts = readMat(file);
 end
 
 locCand = [candidates(:).x1; candidates(:).x2; ...
