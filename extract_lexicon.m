@@ -15,6 +15,10 @@ elseif strcmpi(opts.dataset,'ICDAR11')
     wordsTe = data.wordsTe;
     words=[wordsTe(:).sLexi wordsTe(:).mLexi];
     words = unique(words);
+elseif strcmpi(opts.dataset,'ICDAR03')
+    wordsTe = data.wordsTe;
+    words=[wordsTe(:).sLexi wordsTe(:).mLexi];
+    words = unique(words);
 elseif strcmpi(opts.dataset,'SVT')
     wordsTe = data.wordsTe;
     words=[wordsTe(:).sLexi];
