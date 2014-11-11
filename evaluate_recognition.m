@@ -7,7 +7,6 @@ else
     inters=@intersect;
 end
 
-emb = embedding.kcca;
 
 % Create/load the dictionary (lexicon)
 if ~exist(opts.fileLexicon,'file')
@@ -16,26 +15,43 @@ else
     load(opts.fileLexicon,'lexicon')
 end
 
-%lexicon.phocs = [lexicon.phocs;encodeWordsLength(lexicon.words,10)];
-
-% Embed the test representations
-matx = emb.rndmatx(1:emb.M,:);
-tmp = matx*data.attReprTe;
-attReprTe_emb = 1/sqrt(emb.M) * [ cos(tmp); sin(tmp)];
-attReprTe_emb=bsxfun(@minus, attReprTe_emb, emb.matts);
-attReprTe_emb = emb.Wx(:,1:emb.K)' * attReprTe_emb;
-attReprTe_emb = (bsxfun(@rdivide, attReprTe_emb, sqrt(sum(attReprTe_emb.*attReprTe_emb))));
-
-% Embed the lexicon dictionary
 lexicon_phocs = single(lexicon.phocs);
-maty = emb.rndmaty(1:emb.M,:);
-tmp = maty*lexicon_phocs;
-lexicon_phocs_emb = 1/sqrt(emb.M) * [ cos(tmp); sin(tmp)];
-lexicon_phocs_emb=bsxfun(@minus, lexicon_phocs_emb, emb.mphocs);
-lexicon_phocs_emb = emb.Wy(:,1:emb.K)' * lexicon_phocs_emb;
-lexicon_phocs_emb = (bsxfun(@rdivide, lexicon_phocs_emb, sqrt(sum(lexicon_phocs_emb.*lexicon_phocs_emb))));
-lexicon_phocs_emb(isnan(lexicon_phocs_emb)) = 0;
 words = lexicon.words;
+
+if opts.TestCCA
+    emb = embedding.cca;
+    % Embed the test representations
+    attReprTe_emb = bsxfun(@rdivide, data.attReprTe,sqrt(sum(data.attReprTe.*data.attReprTe)));
+    attReprTe_emb(isnan(attReprTe_emb)) = 0;
+    attReprTe_emb =  bsxfun(@minus, attReprTe_emb,emb.matts);
+    attReprTe_emb = emb.Wx(:,1:emb.K)' * attReprTe_emb;
+    attReprTe_emb = (bsxfun(@rdivide, attReprTe_emb, sqrt(sum(attReprTe_emb.*attReprTe_emb))));
+    
+    % Embed the lexicon dictionary
+    lexicon_phocs_emb = bsxfun(@rdivide, lexicon_phocs,sqrt(sum(lexicon_phocs.*lexicon_phocs)));
+    lexicon_phocs_emb=  bsxfun(@minus, lexicon_phocs_emb,emb.mphocs);
+    lexicon_phocs_emb = emb.Wy(:,1:emb.K)' * lexicon_phocs_emb;
+    lexicon_phocs_emb = (bsxfun(@rdivide, lexicon_phocs_emb, sqrt(sum(lexicon_phocs_emb.*lexicon_phocs_emb))));
+    
+elseif opts.TestKCCA
+    emb = embedding.kcca;
+    % Embed the test representations
+    matx = emb.rndmatx(1:emb.M,:);
+    tmp = matx*data.attReprTe;
+    attReprTe_emb = 1/sqrt(emb.M) * [ cos(tmp); sin(tmp)];
+    attReprTe_emb=bsxfun(@minus, attReprTe_emb, emb.matts);
+    attReprTe_emb = emb.Wx(:,1:emb.K)' * attReprTe_emb;
+    attReprTe_emb = (bsxfun(@rdivide, attReprTe_emb, sqrt(sum(attReprTe_emb.*attReprTe_emb))));
+    
+    % Embed the lexicon dictionary
+    maty = emb.rndmaty(1:emb.M,:);
+    tmp = maty*lexicon_phocs;
+    lexicon_phocs_emb = 1/sqrt(emb.M) * [ cos(tmp); sin(tmp)];
+    lexicon_phocs_emb=bsxfun(@minus, lexicon_phocs_emb, emb.mphocs);
+    lexicon_phocs_emb = emb.Wy(:,1:emb.K)' * lexicon_phocs_emb;
+    lexicon_phocs_emb = (bsxfun(@rdivide, lexicon_phocs_emb, sqrt(sum(lexicon_phocs_emb.*lexicon_phocs_emb))));
+    lexicon_phocs_emb(isnan(lexicon_phocs_emb)) = 0;
+end
 
 
 % Get all the valid queries. For most datasets, that is all of them.
@@ -105,8 +121,8 @@ for i=1:N
         p1full(i) = 1;
     else
         p1full(i) = 0;
-        cerfull(i) = levenshtein_c(gt, words{I(1)});        
-    end    
+        cerfull(i) = levenshtein_c(gt, words{I(1)});
+    end
 end
 
 % Compute wer if there is line info available
@@ -119,7 +135,7 @@ if isfield(data.wordsTe,'lineId')
     if isfield(data.wordsTe,'mLexi')
         recognition.wermedium = compute_wer(linesTe,p1medium);
     end
-    recognition.werfull = compute_wer(linesTe,p1full);        
+    recognition.werfull = compute_wer(linesTe,p1full);
 end
 
 
