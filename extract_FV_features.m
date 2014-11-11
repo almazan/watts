@@ -11,8 +11,16 @@ parfor i=1:length(images)
     im = im2single(im);
     
     % get PHOW features
-    [frames, descrs] = vl_phow(im, opts.phowOpts{:}) ;
-    descrs = descrs / 255;
+    descrs = [];
+    frames = [];
+    if height>1 && width>1
+        [frames, descrs] = vl_phow(im, opts.phowOpts{:}) ;
+        descrs = descrs / 255;
+    end
+    
+    if isempty(descrs)
+        continue;
+    end
     
     if opts.doMinibox == 0
         % XY at GT coordinate space

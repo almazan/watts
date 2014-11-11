@@ -9,6 +9,21 @@ isub = [d(:).isdir];
 nameFolds = {d(isub).name}';
 nameFolds(ismember(nameFolds,{'.','..'})) = [];
 
+if strcmpi(path(end-7:end-1),'ICDAR03')
+    folds = nameFolds;
+    nameFoldsFinal = {};
+    for i=1:length(folds)
+        d = dir(fullfile(path,folds{i}));
+        isub = [d(:).isdir];
+        nameFolds = {d(isub).name}';
+        nameFolds(ismember(nameFolds,{'.','..'})) = [];
+        for j=1:length(nameFolds)
+            nameFoldsFinal = [nameFoldsFinal fullfile(folds{i},nameFolds{j})];
+        end
+    end
+    nameFolds = nameFoldsFinal;
+end
+
 c = 0;
 docsDic = containers.Map();
 idxDoc = 0;
@@ -17,11 +32,24 @@ for i=1:length(nameFolds)
     fid = fopen(fullfile(path,nameFolds{i},'info.txt'),'r');
     if fid>0
         text = textscan(fid,'%s %d %d %d %d %f %s');
+        if strcmpi(path(end-7:end-1),'ICDAR03')
+            imId = classes(strrep(nameFolds{i},'/','_'));
+        else
         imId = classes([nameFolds{i} '.jpg']);
+        end
+        fprintf('Reading candidates of image %s\n',nameFolds{i});
         for j=1:length(text{1,1})
             file = fullfile(path,nameFolds{i},text{1}{j});
+            if ~exist(file,'file')
+                continue;
+            end
+            try
+            im = rgb2gray(imread(file));
+            catch e
+                continue;
+            end
             c = c+1;
-            candidates(c).im = rgb2gray(imread(file));
+            candidates(c).im = im;
             candidates(c).fname = text{1}{j};
             candidates(c).imId = imId;
             candidates(c).x1 = text{2}(j);
