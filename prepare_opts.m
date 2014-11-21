@@ -4,9 +4,9 @@ function opts = prepare_opts()
 % Select the disk location of your datasets
 opts.path_datasets = 'datasets';
 % Path where the generated files will be saved
-opts.pathData = '~/Development/data/watts';
+opts.pathData = '~/workspace/data/watts';
 % Select the dataset
-opts.dataset = 'ICDAR03';
+opts.dataset = 'SVT';
 
 % Adding all the necessary libraries and paths
 addpath('util/');
@@ -16,16 +16,16 @@ end
 addpath('util/bin');
 addpath('util/io');
 if ~exist('calib_c','file')
-    mex -o util/bin/calib_c -O -largeArrayDims util/calib_c.c
+    mex -output util/bin/calib_c -O -largeArrayDims util/calib_c.c
 end
 if ~exist('computeStats_c','file')
-    mex -o util/bin/computeStats_c -O -largeArrayDims  CFLAGS="\$CFLAGS -std=c99" util/computeStats_c.c
+    mex -output util/bin/computeStats_c -O -largeArrayDims  CFLAGS="\$CFLAGS -std=c99" util/computeStats_c.c
 end
 if ~exist('phoc_mex','file')
-    mex -o util/bin/phoc_mex -O -largeArrayDims util/phoc_mex.cpp
+    mex -output util/bin/phoc_mex -O -largeArrayDims util/phoc_mex.cpp
 end
 if ~exist('levenshtein_c','file')
-    mex -o util/bin/levenshtein_c -O -largeArrayDims util/levenshtein_c.c
+    mex -output util/bin/levenshtein_c -O -largeArrayDims util/levenshtein_c.c
 end
 if ~exist('util/vlfeat-0.9.18/toolbox/mex','dir')
     if isunix
@@ -106,7 +106,7 @@ opts.Reg.Reg = [1e-1,1e-2,1e-3,1e-4];
 opts.Reg.verbose = 1;
 
 opts.TestCCA = 1;
-opts.CCA.Dims = [80];
+opts.CCA.Dims = [96];
 opts.CCA.Reg = [1e-4,1e-5,1e-6];
 opts.CCA.verbose = 0;
 
