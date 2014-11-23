@@ -1,4 +1,4 @@
-function opts = prepare_opts()
+function opts = prepare_opts(dataset)
 
 % Adjustable paths
 % Select the disk location of your datasets
@@ -6,7 +6,10 @@ opts.path_datasets = 'datasets';
 % Path where the generated files will be saved
 opts.pathData = '~/workspace/data/watts';
 % Select the dataset
-opts.dataset = 'SVT';
+if nargin < 1
+    dataset = 'SVT';
+end
+opts.dataset = dataset;
 
 % Adding all the necessary libraries and paths
 addpath('util/');

@@ -8,6 +8,7 @@ function [att_models,attFeatsTr] = learn_attributes_bagging(opts,data)
 % Set params. eta, lbd, beta and bias_multiplier can receive multiple
 % values that will be crossvalidated for map.
 params = opts.sgdparams;
+params.weightsTr = data.weightsTr;
 
 feats = data.feats_training;
 phocs = data.phocs_training;
@@ -20,7 +21,7 @@ attFeatsTr = single(zeros(numAtt,numSamples));
 att_models = struct('W',[],'B',[],'numPosSamples',[]);
 
 % For each attribute
-parfor idxAtt = 1:numAtt
+for idxAtt = 1:numAtt
     [model, encodedTr] = learn_att(idxAtt,feats, phocs,dimFeats, numSamples, opts, params);
     att_models(idxAtt) = model;
     attFeatsTr(idxAtt,:) = encodedTr;
@@ -32,13 +33,13 @@ function [model, attFeatsBag] = learn_att(idxAtt,feats, phocs,dimFeats, numSampl
     fileModel = sprintf('%smodel_%.3d.mat',opts.folderModels,idxAtt);
     if ~exist(fileModel,'file')
         % Separate positives and negatives
-        idxPos = find(phocs(idxAtt,:)~=0);
-        idxNeg = find(phocs(idxAtt,:)==0);
+        idxPos = find(phocs(idxAtt,:) >= 0.48);
+        idxNeg = find(phocs(idxAtt,:) < 0.48);
         nPos = length(idxPos);
         nNeg = length(idxNeg);
         
         % If too few positives, discard attribute :(
-        if nPos < 2
+        if nPos < 2 || nNeg < 2
             fprintf('Model for attribute %d discarded. Not enough data\n',idxAtt);
             f=fopen(opts.modelsLog,'a');
             fprintf(f,'Model for attribute %d discarded. Not enough data\n',idxAtt);
@@ -87,13 +88,14 @@ function [model, attFeatsBag] = learn_att(idxAtt,feats, phocs,dimFeats, numSampl
                 featsVal = feats(:,idxVal);
                 phocsVal = phocs(:,idxVal);
                 labelsTrain = int32(phocsTrain(idxAtt,:)~=0);
-                labelsVal = int32(phocsVal(idxAtt,:)~=0);
+                labelsVal = int32(phocsVal(idxAtt,:)~=0);                
+                weightsTrain = params.weightsTr(idxTrain);
                 
                 numPosSamples = numPosSamples + nTrainPos;
                 % Learn model
                 tic;
                 %modelAtt = sgdsvm_train_cv_mex(featsTrain,labelsTrain,featsVal,labelsVal,params);
-                modelAtt = cvSVM(featsTrain,labelsTrain,featsVal,labelsVal,params);
+                modelAtt = cvSVM(featsTrain,labelsTrain,featsVal,labelsVal,weightsTrain,  params);
                 t=toc;
                 fprintf('Model for attribute %d it %d pass %d (%.2f map) learned in %.0f seconds using %d positive samples\n',idxAtt, it,cpass, modelAtt.info.acc, t, nTrainPos);
                 f=fopen(opts.modelsLog,'a');
@@ -138,19 +140,23 @@ end
 
 function map = modelMap(scores, labels)
 [s,idx] = sort(scores, 'descend');
-labelsSort = single(labels(idx));
+labelsSort = single(labels(idx)); 
 acc = cumsum(labelsSort).*labelsSort;
 N = sum(labelsSort);
 map = sum(single(acc)./(1:length(labels)))/N;
 end
 
-function model = cvSVM(featsTrain, labelsTrain, featsVal, labelsVal, params) 
+function model = cvSVM(featsTrain, labelsTrain, featsVal, labelsVal, weightsTrain,  params) 
         bestmap = 0;
         bestlbd = 0;
         W = [];
         B = [];
         for lbd=params.lbds
-            [Wv,Bv,info, scores] = vl_svmtrain(featsTrain, double(2*labelsTrain-1), double(lbd),'BiasMultiplier', 0.1);
+            if any(weightsTrain~=1)
+                [Wv,Bv,info, scores] = vl_svmtrain(featsTrain, double(2*labelsTrain-1), double(lbd),'BiasMultiplier', 0.1, 'weights', double(weightsTrain));
+            else
+                [Wv,Bv,info, scores] = vl_svmtrain(featsTrain, double(2*labelsTrain-1), double(lbd),'BiasMultiplier', 0.1);
+            end
             cmap = modelMap(Wv'*featsVal, labelsVal);
             if cmap > bestmap
                 bestmap = cmap;
