@@ -4,6 +4,8 @@
 
 #include <map>
 
+#define HARD 0
+
 
 void computePhoc(char *str, std::map<char,int> vocUni2pos, std::map<std::string,int> vocBi2pos, int Nvoc, int *levels, int Nlevels, int totalLevels, float *out);
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
@@ -119,10 +121,14 @@ void computePhoc(char *str, std::map<char,int> vocUni2pos, std::map<std::string,
                     float start = (starts > startc)?starts:startc;
                     float end = (ends < endc)?ends:endc;
                     float ov = (end-start)*strl;
+                    #if HARD
                     if (ov >=0.48)
                     {
                         p[posOff]+=1;
                     }
+                    #else
+                    p[posOff] = std::max(ov, p[posOff]);
+                    #endif
                 }
             }
             if (doBigrams)
@@ -155,7 +161,7 @@ void computePhoc(char *str, std::map<char,int> vocUni2pos, std::map<std::string,
                 }
             }
             p+=Nvoc;
-        }        
+        }
     }
     return;
 }
