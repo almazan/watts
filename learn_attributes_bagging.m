@@ -8,7 +8,6 @@ function [att_models,attFeatsTr] = learn_attributes_bagging(opts,data)
 % Set params. eta, lbd, beta and bias_multiplier can receive multiple
 % values that will be crossvalidated for map.
 params = opts.sgdparams;
-params.weightsTr = data.weightsTr;
 
 feats = data.feats_training;
 phocs = data.phocs_training;
@@ -88,14 +87,12 @@ function [model, attFeatsBag] = learn_att(idxAtt,feats, phocs,dimFeats, numSampl
                 featsVal = feats(:,idxVal);
                 phocsVal = phocs(:,idxVal);
                 labelsTrain = int32(phocsTrain(idxAtt,:)~=0);
-                labelsVal = int32(phocsVal(idxAtt,:)~=0);                
-                weightsTrain = params.weightsTr(idxTrain);
+                labelsVal = int32(phocsVal(idxAtt,:)~=0);
                 
                 numPosSamples = numPosSamples + nTrainPos;
                 % Learn model
                 tic;
-                %modelAtt = sgdsvm_train_cv_mex(featsTrain,labelsTrain,featsVal,labelsVal,params);
-                modelAtt = cvSVM(featsTrain,labelsTrain,featsVal,labelsVal,weightsTrain,  params);
+                modelAtt = cvSVM(featsTrain,labelsTrain,featsVal,labelsVal,params);
                 t=toc;
                 fprintf('Model for attribute %d it %d pass %d (%.2f map) learned in %.0f seconds using %d positive samples\n',idxAtt, it,cpass, modelAtt.info.acc, t, nTrainPos);
                 f=fopen(opts.modelsLog,'a');
@@ -146,17 +143,13 @@ N = sum(labelsSort);
 map = sum(single(acc)./(1:length(labels)))/N;
 end
 
-function model = cvSVM(featsTrain, labelsTrain, featsVal, labelsVal, weightsTrain,  params) 
+function model = cvSVM(featsTrain, labelsTrain, featsVal, labelsVal, params) 
         bestmap = 0;
         bestlbd = 0;
         W = [];
         B = [];
         for lbd=params.lbds
-            if any(weightsTrain~=1)
-                [Wv,Bv,info, scores] = vl_svmtrain(featsTrain, double(2*labelsTrain-1), double(lbd),'BiasMultiplier', 0.1, 'weights', double(weightsTrain));
-            else
-                [Wv,Bv,info, scores] = vl_svmtrain(featsTrain, double(2*labelsTrain-1), double(lbd),'BiasMultiplier', 0.1);
-            end
+            [Wv,Bv,info, scores] = vl_svmtrain(featsTrain, double(2*labelsTrain-1), double(lbd), 'BiasMultiplier', 0.1);
             cmap = modelMap(Wv'*featsVal, labelsVal);
             if cmap > bestmap
                 bestmap = cmap;
