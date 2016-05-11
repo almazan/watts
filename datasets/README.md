@@ -4,7 +4,7 @@ Alternatively, you can also download other great datasets that have already been
 
 **IAM**: http://www.iam.unibe.ch/fki/databases/iam-handwriting-database
 
-**George Washington**: http://www.cvc.uab.es/~almazan/data/GW.tar.gz
+**George Washington**: https://www.dropbox.com/s/4wvkysd58bu63pt/GW.zip?dl=0
 
 **Street View Text**: http://vision.ucsd.edu/~kai/svt/
 
